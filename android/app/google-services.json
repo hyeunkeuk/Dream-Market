@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "233864747891",
+    "firebase_url": "https://flutter-update-d7873-default-rtdb.firebaseio.com",
+    "project_id": "flutter-update-d7873",
+    "storage_bucket": "flutter-update-d7873.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:233864747891:android:61012c517427f1d29a8306",
+        "android_client_info": {
+          "package_name": "com.vandream.dreammarket"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "233864747891-svmdl19ij8ninfah5kddbg9p4dtsuu2d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHfltE-2cN_dPdTJV9m7bzx3j6odgsEZw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "233864747891-svmdl19ij8ninfah5kddbg9p4dtsuu2d.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "233864747891-bckpab4tu3brttb8906l8i2q7nsigpbr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.shopping"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
