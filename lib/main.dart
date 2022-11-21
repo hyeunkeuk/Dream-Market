@@ -7,6 +7,7 @@ import 'package:shopping/screens/auth/new_auth_screen.dart';
 import 'package:shopping/screens/auth/verify_screen.dart';
 import 'package:shopping/screens/chat/chat_screen.dart';
 import 'package:shopping/screens/chat/search_user_screen.dart';
+import 'package:shopping/screens/history_screen.dart';
 // import 'package:shopping/screens/chat/chat_screen.dart';
 import 'package:shopping/screens/product_detail_screen.dart';
 import '../screens/products_overview_screen.dart';
@@ -135,6 +136,7 @@ class MyApp extends StatelessWidget {
           MessageInboxScreen.routeName: (ctx) => MessageInboxScreen(),
           ChatScreen.routeName: (ctx) => ChatScreen(),
           SearchUserScreen.routeName: (ctx) => SearchUserScreen(),
+          HistoryScreen.routeName: (ctx) => HistoryScreen(),
         },
       ),
     );

@@ -47,10 +47,14 @@ class _OrderScreenState extends State<OrderScreen> {
           ? const Center(child: CircularProgressIndicator())
           : StreamBuilder(
               stream: userStatus == 'admin'
-                  ? FirebaseFirestore.instance.collection('orders').snapshots()
+                  ? FirebaseFirestore.instance
+                      .collection('orders')
+                      .orderBy('dateTime', descending: true)
+                      .snapshots()
                   : FirebaseFirestore.instance
                       .collection('orders')
                       .where('creatorId', isEqualTo: user.uid)
+                      .orderBy('dateTime', descending: true)
                       .snapshots(),
               builder: (ctx, orderSnapshot) {
                 if (orderSnapshot.connectionState == ConnectionState.waiting) {
@@ -63,6 +67,7 @@ class _OrderScreenState extends State<OrderScreen> {
                     itemBuilder: (_, i) => OrderItem(
                       userStatus,
                       orderDocs[i].id,
+                      orderDocs[i]['creatorId'],
                       orderDocs[i]['status'],
                       orderDocs[i]['amount'],
                       orderDocs[i]['dateTime'],

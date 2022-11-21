@@ -192,7 +192,7 @@ class _AuthFormState extends State<AuthForm> {
                     //     },
                     //   ),
                     TextFormField(
-                      // initialValue: '890890890',
+                      initialValue: '890890890',
                       key: ValueKey('password'),
                       validator: (value) {
                         if (value.isEmpty || value.length < 7) {

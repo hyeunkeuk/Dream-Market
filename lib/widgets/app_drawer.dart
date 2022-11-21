@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../screens/orders_screen.dart';
+import 'package:shopping/screens/history_screen.dart';
 import '../screens/user_products_screen.dart';
 import '../providers/auth.dart';
 import 'package:provider/provider.dart';
@@ -34,10 +35,18 @@ class AppDrawer extends StatelessWidget {
             title: Text('Orders'),
             onTap: () {
               Navigator.of(context).pop();
-
               Navigator.of(context).pushNamed(OrderScreen.routeName);
             },
           ),
+          // Divider(),
+          // ListTile(
+          //   leading: Icon(Icons.history),
+          //   title: Text('History'),
+          //   onTap: () {
+          //     Navigator.of(context).pop();
+          //     Navigator.of(context).pushNamed(HistoryScreen.routeName);
+          //   },
+          // ),
           Divider(),
           ListTile(
             leading: Icon(Icons.edit),

@@ -9,20 +9,41 @@ import 'cart_item.dart';
 class OrderItem extends StatefulWidget {
   final String userStatus;
   final String orderId;
+  final String creatorId;
   final String status;
   final num amount;
   final String dateTime;
   final String productId;
   final String title;
 
-  OrderItem(this.userStatus, this.orderId, this.status, this.amount,
-      this.dateTime, this.productId, this.title);
+  OrderItem(this.userStatus, this.orderId, this.creatorId, this.status,
+      this.amount, this.dateTime, this.productId, this.title);
 
   @override
   State<OrderItem> createState() => _OrderItemState();
 }
 
 class _OrderItemState extends State<OrderItem> {
+  var userData;
+  var _isLoading = false;
+  void initState() {
+    fetchUserData();
+    super.initState();
+  }
+
+  Future<void> fetchUserData() async {
+    setState(() {
+      _isLoading = true;
+    });
+    userData = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.creatorId)
+        .get();
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
   Future<void> updateOrderStatus() async {
     String currentStatus = widget.status;
     String newStatus = 'pending';
@@ -35,9 +56,6 @@ class _OrderItemState extends State<OrderItem> {
   }
 
   Future<void> updateProductAvailability() async {
-    // print('im here');
-    // print(widget.products);
-
     String currentStatus = widget.status;
     String newStatus = 'Available';
     if (currentStatus == 'pending') {
@@ -60,114 +78,150 @@ class _OrderItemState extends State<OrderItem> {
   var _expanded = false;
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.all(10),
-      child: Column(
-        children: <Widget>[
-          ListTile(
-            leading: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              color: widget.status == 'pending' ? Colors.yellow : Colors.green,
-              child: widget.status == 'pending'
-                  ? Text('Pending...')
-                  : Text('Accepted'),
-            ),
-            title: Text('\$${widget.amount}'),
-            subtitle: Text(widget.dateTime),
-            trailing: IconButton(
-              icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
-              onPressed: () {
-                setState(() {
-                  _expanded = !_expanded;
-                });
-              },
-            ),
-          ),
-          if (_expanded)
-            Column(
-              children: [
-                widget.userStatus == 'admin'
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: ElevatedButton(
-                            onPressed: () {
-                              updateProductAvailability();
-                              setState(() {
-                                updateOrderStatus();
-                              });
-                            },
-                            child: widget.status == 'pending'
-                                ? Text('Confirm')
-                                : Text('Cancel')),
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: ElevatedButton(
-                            onPressed: widget.status == 'pending'
-                                ? () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (ctx) => AlertDialog(
-                                        title: Text(
-                                          'Are you sure?',
-                                        ),
-                                        content: Text(
-                                          'Do you want to cancel the order?',
-                                        ),
-                                        actions: <Widget>[
-                                          FlatButton(
-                                            onPressed: () {
-                                              Navigator.of(ctx).pop(false);
-                                            },
-                                            child: Text('No'),
-                                          ),
-                                          FlatButton(
-                                            onPressed: () async {
-                                              Navigator.of(ctx).pop(false);
-                                              try {
-                                                setState(() {
-                                                  deleteOrder();
-                                                });
-                                              } catch (error) {}
-                                            },
-                                            child: Text('Confirm'),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }
-                                : null,
-                            child: Text('Cancel')),
-                      ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 4),
-                  height: 100,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Flexible(
-                        child: Text(
-                          widget.title,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
+    return _isLoading
+        ? Center(child: CircularProgressIndicator())
+        : Card(
+            margin: EdgeInsets.all(10),
+            child: Column(
+              children: <Widget>[
+                ListTile(
+                  leading: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    color: widget.status == 'pending'
+                        ? Colors.yellow
+                        : Colors.green,
+                    child: widget.status == 'pending'
+                        ? Text(
+                            'Pending...',
+                          )
+                        : Text(
+                            'Accepted',
                           ),
+                  ),
+                  title: widget.userStatus == 'admin'
+                      ? Text(
+                          '${userData['name']}\n${widget.title}\nAmount: \$${widget.amount}')
+                      : Text('${widget.title}\nAmount: \$${widget.amount}'),
+                  subtitle: Text(widget.dateTime),
+                  trailing: widget.userStatus == 'admin'
+                      ? IconButton(
+                          icon: Icon(_expanded
+                              ? Icons.expand_less
+                              : Icons.expand_more),
+                          onPressed: () {
+                            setState(() {
+                              _expanded = !_expanded;
+                            });
+                          },
+                        )
+                      : IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: widget.status == 'pending'
+                              ? () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+                                      title: Text(
+                                        'Are you sure?',
+                                      ),
+                                      content: Text(
+                                        'Do you want to cancel the order?',
+                                      ),
+                                      actions: <Widget>[
+                                        FlatButton(
+                                          onPressed: () {
+                                            Navigator.of(ctx).pop(false);
+                                          },
+                                          child: Text('No'),
+                                        ),
+                                        FlatButton(
+                                          onPressed: () async {
+                                            Navigator.of(ctx).pop(false);
+                                            try {
+                                              setState(() {
+                                                deleteOrder();
+                                              });
+                                            } catch (error) {}
+                                          },
+                                          child: Text('Confirm'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }
+                              : null,
+                        ),
+                ),
+                if (_expanded)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 0),
+                        child: ElevatedButton(
+                          style: widget.status == 'pending'
+                              ? ElevatedButton.styleFrom(
+                                  primary: Colors.green,
+                                )
+                              : ElevatedButton.styleFrom(
+                                  primary: Colors.grey,
+                                ),
+                          onPressed: () {
+                            updateProductAvailability();
+                            setState(() {
+                              updateOrderStatus();
+                            });
+                          },
+                          child: widget.status == 'pending'
+                              ? Text(
+                                  'Confirm',
+                                )
+                              : Text(
+                                  'Cancel',
+                                ),
                         ),
                       ),
-                      Text(
-                        '${widget.amount}',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.grey,
-                        ),
-                      )
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: widget.status == 'pending'
+                            ? () {
+                                showDialog(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    title: Text(
+                                      'Are you sure?',
+                                    ),
+                                    content: Text(
+                                      'Do you want to cancel the order?',
+                                    ),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        onPressed: () {
+                                          Navigator.of(ctx).pop(false);
+                                        },
+                                        child: Text('No'),
+                                      ),
+                                      FlatButton(
+                                        onPressed: () async {
+                                          Navigator.of(ctx).pop(false);
+                                          try {
+                                            setState(() {
+                                              deleteOrder();
+                                            });
+                                          } catch (error) {}
+                                        },
+                                        child: Text('Confirm'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            : null,
+                      ),
                     ],
-                  ),
-                ),
+                  )
               ],
-            )
-        ],
-      ),
-    );
+            ),
+          );
   }
 }
