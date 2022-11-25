@@ -111,18 +111,24 @@ class _OrderScreenState extends State<OrderScreen> {
                                         ),
                                       )),
                                   pendingOrderDocs.length > 0
-                                      ? ListView.builder(
-                                          shrinkWrap: true,
-                                          itemCount: pendingOrderDocs.length,
-                                          itemBuilder: (_, i) => OrderItem(
-                                            userStatus,
-                                            pendingOrderDocs[i].id,
-                                            pendingOrderDocs[i]['creatorId'],
-                                            pendingOrderDocs[i]['status'],
-                                            pendingOrderDocs[i]['amount'],
-                                            pendingOrderDocs[i]['dateTime'],
-                                            pendingOrderDocs[i]['productId'],
-                                            pendingOrderDocs[i]['title'],
+                                      ? ConstrainedBox(
+                                          constraints: new BoxConstraints(
+                                            minHeight: 50.0,
+                                            maxHeight: 500.0,
+                                          ),
+                                          child: ListView.builder(
+                                            shrinkWrap: true,
+                                            itemCount: pendingOrderDocs.length,
+                                            itemBuilder: (_, i) => OrderItem(
+                                              userStatus,
+                                              pendingOrderDocs[i].id,
+                                              pendingOrderDocs[i]['creatorId'],
+                                              pendingOrderDocs[i]['status'],
+                                              pendingOrderDocs[i]['amount'],
+                                              pendingOrderDocs[i]['dateTime'],
+                                              pendingOrderDocs[i]['productId'],
+                                              pendingOrderDocs[i]['title'],
+                                            ),
                                           ),
                                         )
                                       : Text('No Pending Item'),
@@ -140,20 +146,31 @@ class _OrderScreenState extends State<OrderScreen> {
                                           ),
                                         ),
                                       )),
-                                  ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: completedOrderDocs.length,
-                                    itemBuilder: (_, i) => OrderItem(
-                                      userStatus,
-                                      completedOrderDocs[i].id,
-                                      completedOrderDocs[i]['creatorId'],
-                                      completedOrderDocs[i]['status'],
-                                      completedOrderDocs[i]['amount'],
-                                      completedOrderDocs[i]['dateTime'],
-                                      completedOrderDocs[i]['productId'],
-                                      completedOrderDocs[i]['title'],
-                                    ),
-                                  ),
+                                  completedOrderDocs.length > 0
+                                      ? ConstrainedBox(
+                                          constraints: new BoxConstraints(
+                                            minHeight: 50.0,
+                                            maxHeight: 500.0,
+                                          ),
+                                          child: ListView.builder(
+                                            shrinkWrap: true,
+                                            itemCount:
+                                                completedOrderDocs.length,
+                                            itemBuilder: (_, i) => OrderItem(
+                                              userStatus,
+                                              completedOrderDocs[i].id,
+                                              completedOrderDocs[i]
+                                                  ['creatorId'],
+                                              completedOrderDocs[i]['status'],
+                                              completedOrderDocs[i]['amount'],
+                                              completedOrderDocs[i]['dateTime'],
+                                              completedOrderDocs[i]
+                                                  ['productId'],
+                                              completedOrderDocs[i]['title'],
+                                            ),
+                                          ),
+                                        )
+                                      : Text('No Order History'),
                                 ],
                               ),
                             );
