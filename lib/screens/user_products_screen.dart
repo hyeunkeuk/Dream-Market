@@ -121,7 +121,7 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
                               ),
                             ],
                           )
-                        : Container(),
+                        : Container(), //Don't show admin part on normal user screen
                     Column(
                       children: [
                         Container(

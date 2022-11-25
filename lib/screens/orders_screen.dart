@@ -18,6 +18,7 @@ class _OrderScreenState extends State<OrderScreen> {
   CollectionReference userList = FirebaseFirestore.instance.collection('users');
   var userData;
   var userStatus;
+
   bool _isLoading = false;
   @override
   void initState() {
@@ -45,40 +46,125 @@ class _OrderScreenState extends State<OrderScreen> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : StreamBuilder(
-              stream: userStatus == 'admin'
-                  ? FirebaseFirestore.instance
-                      .collection('orders')
-                      .orderBy('dateTime', descending: true)
-                      .snapshots()
-                  : FirebaseFirestore.instance
-                      .collection('orders')
-                      .where('creatorId', isEqualTo: user.uid)
-                      .orderBy('dateTime', descending: true)
-                      .snapshots(),
-              builder: (ctx, orderSnapshot) {
-                if (orderSnapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                final orderDocs = orderSnapshot.data.docs;
-                if (orderDocs.length > 0) {
-                  return ListView.builder(
-                    itemCount: orderDocs.length,
-                    itemBuilder: (_, i) => OrderItem(
-                      userStatus,
-                      orderDocs[i].id,
-                      orderDocs[i]['creatorId'],
-                      orderDocs[i]['status'],
-                      orderDocs[i]['amount'],
-                      orderDocs[i]['dateTime'],
-                      orderDocs[i]['productId'],
-                      orderDocs[i]['title'],
-                    ),
-                  );
-                } else {
-                  return Container();
-                }
-              }),
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Container(
+                  //     alignment: Alignment.centerLeft,
+                  //     child: Padding(
+                  //       padding: const EdgeInsets.all(8.0),
+                  //       child: Text(
+                  //         'Pending Orders',
+                  //         style: TextStyle(
+                  //           // color: Colors.pink.shade300,
+                  //           fontSize: 25,
+                  //           fontWeight: FontWeight.bold,
+                  //         ),
+                  //       ),
+                  //     )),
+                  SingleChildScrollView(
+                    child: StreamBuilder(
+                        stream: userStatus == 'admin'
+                            ? FirebaseFirestore.instance
+                                .collection('orders')
+                                .orderBy('dateTime', descending: true)
+                                .snapshots()
+                            : FirebaseFirestore.instance
+                                .collection('orders')
+                                .where('creatorId', isEqualTo: user.uid)
+                                .orderBy('dateTime', descending: true)
+                                .snapshots(),
+                        builder: (ctx, orderSnapshot) {
+                          if (orderSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                          final orderDocs = orderSnapshot.data.docs;
+
+                          var pendingOrderDocs = new List();
+                          var completedOrderDocs = new List();
+
+                          for (var i = 0; i < orderDocs.length; i++) {
+                            if (orderDocs[i]['status'] == 'pending') {
+                              pendingOrderDocs.add(orderDocs[i]);
+                            } else {
+                              completedOrderDocs.add(orderDocs[i]);
+                            }
+                          }
+
+                          if (orderDocs.length > 0) {
+                            return SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  Container(
+                                      alignment: Alignment.centerLeft,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          'Pending Orders',
+                                          style: TextStyle(
+                                            // color: Colors.pink.shade300,
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      )),
+                                  pendingOrderDocs.length > 0
+                                      ? ListView.builder(
+                                          shrinkWrap: true,
+                                          itemCount: pendingOrderDocs.length,
+                                          itemBuilder: (_, i) => OrderItem(
+                                            userStatus,
+                                            pendingOrderDocs[i].id,
+                                            pendingOrderDocs[i]['creatorId'],
+                                            pendingOrderDocs[i]['status'],
+                                            pendingOrderDocs[i]['amount'],
+                                            pendingOrderDocs[i]['dateTime'],
+                                            pendingOrderDocs[i]['productId'],
+                                            pendingOrderDocs[i]['title'],
+                                          ),
+                                        )
+                                      : Text('No Pending Item'),
+                                  Divider(),
+                                  Container(
+                                      alignment: Alignment.centerLeft,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          'Order History',
+                                          style: TextStyle(
+                                            // color: Colors.pink.shade300,
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      )),
+                                  ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: completedOrderDocs.length,
+                                    itemBuilder: (_, i) => OrderItem(
+                                      userStatus,
+                                      completedOrderDocs[i].id,
+                                      completedOrderDocs[i]['creatorId'],
+                                      completedOrderDocs[i]['status'],
+                                      completedOrderDocs[i]['amount'],
+                                      completedOrderDocs[i]['dateTime'],
+                                      completedOrderDocs[i]['productId'],
+                                      completedOrderDocs[i]['title'],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        }),
+                  ),
+                ],
+              ),
+            ),
     );
   }
 }
