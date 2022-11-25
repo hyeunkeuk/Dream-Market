@@ -301,7 +301,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
             // : AppDrawer('Dreamer'),
             : userData == null
                 ? AppDrawer('Dreamer')
-                : AppDrawer(userData['username']),
+                : AppDrawer(userData['name']),
         body: _isLoading
             ? Center(
                 child: CircularProgressIndicator(),
