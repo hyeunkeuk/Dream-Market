@@ -64,6 +64,7 @@ class _OrderItemState extends State<OrderItem> {
     CollectionReference productList =
         FirebaseFirestore.instance.collection('products');
 
+    // Need a Workaround for updating product availability for dream products and normal products
     await productList.doc(widget.productId).update({
       'status': newStatus,
     });

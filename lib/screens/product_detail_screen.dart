@@ -32,8 +32,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
     final productData = ModalRoute.of(context).settings.arguments as List;
-    final showDream = productData[1];
     final productId = productData[0].toString();
+    final showDream = productData[1];
+    final creator = productData[2];
     final cart = Provider.of<Cart>(context);
 
     final userFavoriteProvider = Provider.of<UserFavorite>(context);
@@ -98,10 +99,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         ),
                       ),
                       Text(
-                        '\$${productDocs['price']}',
+                        '\$${productDocs['price']}      ',
                         // textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Colors.grey,
+                          color: Colors.grey.shade800,
                           fontSize: 20,
                         ),
                       ),
@@ -197,28 +198,44 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     width: double.infinity,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        CircleAvatar(
+                          backgroundColor: Colors.indigo.shade100,
+                          backgroundImage: creator['imageUrl'] != null
+                              ? creator['imageUrl'] != ''
+                                  ? NetworkImage(creator['imageUrl'])
+                                  : null
+                              : null,
+                        ),
+                        Text(
+                          '  ${creator['name']}',
+                          style: TextStyle(
+                            color: Colors.indigo,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Spacer(),
                         ElevatedButton(
-                            child: productDocs['creatorId'] == user.uid
-                                ? Text('Edit')
-                                : Text('Chat'),
-                            onPressed: () {
-                              productDocs['creatorId'] == user.uid
-                                  ? Navigator.of(context).pushNamed(
-                                      EditProductScreen.routeName,
-                                      arguments: [
-                                          productId,
-                                          productDocs['title'],
-                                          productDocs['imageUrl'],
-                                          productDocs['price'],
-                                          productDocs['description'],
-                                          productDocs['category'],
-                                        ])
-                                  : Navigator.of(context).pushNamed(
-                                      ChatScreen.routeName,
-                                      arguments: productDocs['creatorId']);
-                            }),
+                          child: productDocs['creatorId'] == user.uid
+                              ? Text('Edit')
+                              : Text('Chat'),
+                          onPressed: () {
+                            productDocs['creatorId'] == user.uid
+                                ? Navigator.of(context).pushNamed(
+                                    EditProductScreen.routeName,
+                                    arguments: [
+                                        productId,
+                                        productDocs['title'],
+                                        productDocs['imageUrl'],
+                                        productDocs['price'],
+                                        productDocs['description'],
+                                        productDocs['category'],
+                                      ])
+                                : Navigator.of(context).pushNamed(
+                                    ChatScreen.routeName,
+                                    arguments: productDocs['creatorId']);
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -230,21 +247,39 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       horizontal: 10,
                     ),
                     width: double.infinity,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Description: ',
-                          textAlign: TextAlign.start,
-                          softWrap: true,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.indigo.shade100,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(color: Colors.black12, blurRadius: 20)
+                        ],
+                      ),
+                      child: ConstrainedBox(
+                        constraints: new BoxConstraints(
+                          minHeight: 150,
+                          minWidth: double.infinity,
                         ),
-                        Text(
-                          productDocs['description'],
-                          textAlign: TextAlign.center,
-                          softWrap: true,
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              // Text(
+                              //   'Description: ',
+                              //   textAlign: TextAlign.start,
+                              //   softWrap: true,
+                              // ),
+                              Text(
+                                productDocs['description'],
+                                // textAlign: TextAlign.center,
+                                softWrap: true,
+                              ),
+                            ],
+                          ),
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ],

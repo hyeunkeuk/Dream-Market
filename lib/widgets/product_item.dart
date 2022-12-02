@@ -115,7 +115,11 @@ class _ProductItemState extends State<ProductItem> {
                 onTap: () {
                   Navigator.of(context).pushNamed(
                     ProductDetailScreen.routeName,
-                    arguments: [widget.id, widget.showDream],
+                    arguments: [
+                      widget.id,
+                      widget.showDream,
+                      creator,
+                    ],
                   );
                 },
                 child: widget.imageUrl != ''
