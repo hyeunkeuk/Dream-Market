@@ -28,7 +28,7 @@ class UserProductItem extends StatelessWidget {
         FirebaseFirestore.instance.collection('products');
 
     var storageReference =
-        FirebaseStorage.instance.ref().child('product_image/${id}');
+        FirebaseStorage.instance.ref().child('product_image');
 
     if (isDreamProduct) {
       products = FirebaseFirestore.instance.collection('dream');
@@ -108,13 +108,24 @@ class UserProductItem extends StatelessWidget {
                         onPressed: () async {
                           Navigator.of(ctx).pop(false);
                           try {
-                            storageReference.delete();
-                            await products
-                                .doc(id)
-                                .delete()
-                                .then((_) => print('Product Deleted'))
-                                .catchError((_) =>
-                                    print('Failed to delete the product'));
+                            await storageReference
+                                .child('${id}')
+                                .listAll()
+                                .then((value) {
+                              value.items.forEach((element) {
+                                FirebaseStorage.instance
+                                    .ref(element.fullPath)
+                                    .delete();
+                                // .then((value) => print('Storage Deleted'))
+                                // .catchError((error) => print(
+                                //     'Failed to delete the storage data: ${error}'));
+                              });
+                            });
+
+                            await products.doc(id).delete();
+                            // .then((_) => print('Product Deleted'))
+                            // .catchError((_) =>
+                            //     print('Failed to delete the product'));
                           } catch (error) {
                             scaffold.showSnackBar(
                               SnackBar(
