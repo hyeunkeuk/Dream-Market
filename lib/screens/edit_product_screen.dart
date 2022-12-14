@@ -37,7 +37,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   var _editedProduct = Product(
     id: null,
     title: '',
-    price: 0,
+    price: 0.0,
     description: '',
     imageUrl: [],
     category: '',
@@ -47,7 +47,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   var _initValues = {
     'title': '',
     'description': '',
-    'price': '',
+    'price': 0.0,
     'image': [],
     'category': '',
     'location': '',
@@ -136,22 +136,21 @@ class _EditProductScreenState extends State<EditProductScreen> {
       for (int i = 0; i < resultant['imageUrl'].length; i++) {
         imageUrlList.add(resultant['imageUrl'][i].toString());
       }
-
       _editedProduct = Product(
         id: resultant.id,
         title: resultant['title'],
-        imageUrl: imageUrlList,
-        price: resultant['price'],
         description: resultant['description'],
+        price: resultant['price'].toDouble(),
+        imageUrl: imageUrlList,
         category: resultant['category'],
         location: resultant['location'],
-        status: resultant['location'],
+        status: resultant['status'],
       );
 
       _initValues = {
         'title': _editedProduct.title,
         'description': _editedProduct.description,
-        'price': _editedProduct.price.toString(),
+        'price': _editedProduct.price,
         'imageUrl': _editedProduct.imageUrl,
         'category': _editedProduct.category,
         'location': _editedProduct.location,
@@ -327,15 +326,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
             Navigator.of(context).pop();
           } else {
             try {
-              String collectionName = 'products';
-              if (userStatus == 'admin') {
-                collectionName = 'dream';
-              }
-              print(collectionName);
+              // String collectionName = 'products';
+              // if (userStatus == 'admin') {
+              //   collectionName = 'dream';
+              // }
+              // print(collectionName);
 
-              var addedProduct = await FirebaseFirestore.instance
-                  .collection(collectionName)
-                  .add(
+              var addedProduct =
+                  await FirebaseFirestore.instance.collection('products').add(
                 {
                   'title': _editedProduct.title,
                   'description': _editedProduct.description,
@@ -362,7 +360,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   status: _editedProduct.status,
                 );
                 FirebaseFirestore.instance
-                    .collection(collectionName)
+                    .collection('products')
                     .doc(addedProduct.id)
                     .update(
                   {
@@ -464,7 +462,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         },
                       ),
                       TextFormField(
-                        initialValue: _initValues['price'],
+                        initialValue: _initValues['price'].toString(),
                         decoration: InputDecoration(labelText: 'Price'),
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.number,

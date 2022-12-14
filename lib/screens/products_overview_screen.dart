@@ -139,10 +139,15 @@ class ProductOverviewScreen extends StatefulWidget {
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   var _showDream = true;
   var _showFavorites = false;
+  var _isInit = true;
   var _isLoading = false;
+
   final user = FirebaseAuth.instance.currentUser;
   var userData;
-  var _isInit = true;
+
+  final products = FirebaseFirestore.instance.collection('products');
+  var dreamProductData;
+  var marketProductData;
 
   @override
   void initState() {
@@ -158,6 +163,15 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
     // print(userData);
   }
 
+  Future<void> getAllProducts() async {
+    var dreamProductData =
+        products.where('type', isEqualTo: 'dream').snapshots();
+    var marketProductData =
+        products.where('type', isEqualTo: 'market').snapshots();
+    print('dream: ${dreamProductData}');
+    print('market: ${marketProductData}');
+  }
+
   // @override
   void didChangeDependencies() {
     if (_isInit) {
@@ -166,6 +180,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
           _isLoading = true;
         });
       }
+      // getAllProducts();
       getUsername().then((value) {
         if (mounted) {
           setState(() {

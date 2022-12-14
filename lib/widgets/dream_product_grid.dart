@@ -33,8 +33,9 @@ class _DreamProductsGridState extends State<DreamProductsGrid> {
 
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection('dream')
-            // .where('creatorId', isEqualTo: 'dream')
+            .collection('products')
+            .where('type', isEqualTo: 'dream')
+            .orderBy('createdAt', descending: true)
             .snapshots(),
         builder: (ctx, productSnapshot) {
           if (productSnapshot.connectionState == ConnectionState.waiting ||
@@ -59,9 +60,16 @@ class _DreamProductsGridState extends State<DreamProductsGrid> {
                 return ProductItem(
                   widget.showDream,
                   selectedProduct[i].id,
-                  selectedProduct[i]['title'],
+                  selectedProduct[i]['category'],
+                  selectedProduct[i]['createdAt'],
+                  selectedProduct[i]['creatorId'],
+                  selectedProduct[i]['description'],
+                  selectedProduct[i]['imageUrl'],
+                  selectedProduct[i]['location'],
                   selectedProduct[i]['price'],
-                  selectedProduct[i]['imageUrl'][0],
+                  selectedProduct[i]['status'],
+                  selectedProduct[i]['title'],
+                  selectedProduct[i]['type'],
                 );
               },
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

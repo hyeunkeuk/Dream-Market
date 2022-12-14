@@ -13,16 +13,30 @@ import '../providers/user_favorite.dart';
 class ProductItem extends StatefulWidget {
   final bool showDream;
   final String id;
-  final String title;
+  final String category;
+  final Timestamp createdAt;
+  final String creatorId;
+  final String description;
+  final List imageUrl;
+  final String location;
   final num price;
-  final String imageUrl;
+  final String status;
+  final String title;
+  final String type;
 
   ProductItem(
     this.showDream,
     this.id,
-    this.title,
-    this.price,
+    this.category,
+    this.createdAt,
+    this.creatorId,
+    this.description,
     this.imageUrl,
+    this.location,
+    this.price,
+    this.status,
+    this.title,
+    this.type,
   );
 
   @override
@@ -38,31 +52,31 @@ class _ProductItemState extends State<ProductItem> {
   String categoryOption;
   List<String> pastUserFavoriteList = [];
 
-  var productData;
+  // var productData;
   var creator;
 
   var _isLoading = false;
 
   @override
   void initState() {
-    fetchProductData();
+    fetchCreatorData();
     super.initState();
   }
 
-  Future<void> fetchProductData() async {
+  Future<void> fetchCreatorData() async {
     setState(() {
       _isLoading = true;
     });
-    if (widget.showDream) {
-      productList = FirebaseFirestore.instance.collection('dream');
-    } else {
-      productList = FirebaseFirestore.instance.collection('products');
-    }
-
-    productData = await productList.doc(widget.id).get();
+    // if (widget.showDream) {
+    //   productList = FirebaseFirestore.instance.collection('dream');
+    // } else {
+    //   productList = FirebaseFirestore.instance.collection('products');
+    // }
+    // productList = FirebaseFirestore.instance.collection('products');
+    // productData = await productList.doc(widget.id).get();
     creator = await FirebaseFirestore.instance
         .collection('users')
-        .doc(productData['creatorId'])
+        .doc(widget.creatorId)
         .get();
     // print(creator['name']);
 
@@ -83,12 +97,12 @@ class _ProductItemState extends State<ProductItem> {
         : ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: GridTile(
-              header: productData['creatorId'] != 'dream'
+              header: creator['status'] != 'admin'
                   ? GridTileBar(
                       backgroundColor: Colors.black54,
                       leading: Row(
                         children: [
-                          if (productData['creatorId'] != 'dream')
+                          if (creator['status'] != 'admin')
                             Text(
                               creator['name'],
                               textAlign: TextAlign.center,
@@ -98,9 +112,9 @@ class _ProductItemState extends State<ProductItem> {
                       ),
                       title: Text(
                           ""), // provide empty space in the middle at the top banner
-                      trailing: productData['creatorId'] != 'dream'
+                      trailing: creator['status'] != 'admin'
                           ? Text(
-                              productData['location'],
+                              widget.location,
                               textAlign: TextAlign.right,
                               style: TextStyle(color: Colors.white),
                             )
@@ -123,7 +137,7 @@ class _ProductItemState extends State<ProductItem> {
                   );
                 },
                 child: widget.imageUrl != ''
-                    ? Image.network(widget.imageUrl, fit: BoxFit.cover)
+                    ? Image.network(widget.imageUrl[0], fit: BoxFit.cover)
                     : const Align(
                         alignment: Alignment.center,
                         child: Text(

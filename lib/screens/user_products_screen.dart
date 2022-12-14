@@ -80,8 +80,8 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
                               SingleChildScrollView(
                                 child: StreamBuilder(
                                     stream: FirebaseFirestore.instance
-                                        .collection('dream')
-                                        // .where('creatorId', isEqualTo: user.uid)
+                                        .collection('products')
+                                        .where('type', isEqualTo: 'dream')
                                         .snapshots(),
                                     builder: (ctx, productSnapshot) {
                                       if (productSnapshot.connectionState ==
@@ -99,16 +99,19 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
                                             itemBuilder: (_, i) => Column(
                                               children: [
                                                 UserProductItem(
-                                                    true,
-                                                    productDocs[i].id,
-                                                    productDocs[i]['title'],
-                                                    productDocs[i]['imageUrl']
-                                                        [0],
-                                                    productDocs[i]['price'],
-                                                    productDocs[i]
-                                                        ['description'],
-                                                    productDocs[i]['category'],
-                                                    productDocs[i]['status']),
+                                                  true,
+                                                  productDocs[i].id,
+                                                  productDocs[i]['category'],
+                                                  productDocs[i]['createdAt'],
+                                                  productDocs[i]['creatorId'],
+                                                  productDocs[i]['description'],
+                                                  productDocs[i]['imageUrl'],
+                                                  productDocs[i]['location'],
+                                                  productDocs[i]['price'],
+                                                  productDocs[i]['status'],
+                                                  productDocs[i]['title'],
+                                                  productDocs[i]['type'],
+                                                ),
                                                 Divider(),
                                               ],
                                             ),
@@ -142,7 +145,7 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
                               stream: userStatus == 'admin'
                                   ? FirebaseFirestore.instance
                                       .collection('products')
-                                      // .where('creatorId', isEqualTo: user.uid)
+                                      .where('type', isEqualTo: 'market')
                                       .snapshots()
                                   : FirebaseFirestore.instance
                                       .collection('products')
@@ -165,12 +168,16 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
                                           UserProductItem(
                                             false,
                                             productDocs[i].id,
-                                            productDocs[i]['title'],
-                                            productDocs[i]['imageUrl'][0],
-                                            productDocs[i]['price'],
-                                            productDocs[i]['description'],
                                             productDocs[i]['category'],
+                                            productDocs[i]['createdAt'],
+                                            productDocs[i]['creatorId'],
+                                            productDocs[i]['description'],
+                                            productDocs[i]['imageUrl'],
+                                            productDocs[i]['location'],
+                                            productDocs[i]['price'],
                                             productDocs[i]['status'],
+                                            productDocs[i]['title'],
+                                            productDocs[i]['type'],
                                           ),
                                           Divider(),
                                         ],

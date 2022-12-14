@@ -93,90 +93,95 @@ class _OrderScreenState extends State<OrderScreen> {
                             }
                           }
 
-                          if (orderDocs.length > 0) {
-                            return SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  Container(
-                                      alignment: Alignment.centerLeft,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          'Pending Orders',
-                                          style: TextStyle(
-                                            // color: Colors.pink.shade300,
-                                            fontSize: 25,
-                                            fontWeight: FontWeight.bold,
+                          return SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                Container(
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        'Pending Orders',
+                                        style: TextStyle(
+                                          // color: Colors.pink.shade300,
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    )),
+                                pendingOrderDocs.length > 0
+                                    ? ConstrainedBox(
+                                        constraints: new BoxConstraints(
+                                          minHeight: 50.0,
+                                          maxHeight: 500.0,
+                                        ),
+                                        child: ListView.builder(
+                                          shrinkWrap: true,
+                                          itemCount: pendingOrderDocs.length,
+                                          itemBuilder: (_, i) => OrderItem(
+                                            userStatus,
+                                            pendingOrderDocs[i].id,
+                                            pendingOrderDocs[i]['creatorId'],
+                                            pendingOrderDocs[i]['status'],
+                                            pendingOrderDocs[i]['amount'],
+                                            pendingOrderDocs[i]['dateTime'],
+                                            pendingOrderDocs[i]['productId'],
+                                            pendingOrderDocs[i]['title'],
                                           ),
                                         ),
-                                      )),
-                                  pendingOrderDocs.length > 0
-                                      ? ConstrainedBox(
-                                          constraints: new BoxConstraints(
-                                            minHeight: 50.0,
-                                            maxHeight: 500.0,
-                                          ),
-                                          child: ListView.builder(
-                                            shrinkWrap: true,
-                                            itemCount: pendingOrderDocs.length,
-                                            itemBuilder: (_, i) => OrderItem(
-                                              userStatus,
-                                              pendingOrderDocs[i].id,
-                                              pendingOrderDocs[i]['creatorId'],
-                                              pendingOrderDocs[i]['status'],
-                                              pendingOrderDocs[i]['amount'],
-                                              pendingOrderDocs[i]['dateTime'],
-                                              pendingOrderDocs[i]['productId'],
-                                              pendingOrderDocs[i]['title'],
-                                            ),
-                                          ),
-                                        )
-                                      : Text('No Pending Item'),
-                                  Divider(),
-                                  Container(
-                                      alignment: Alignment.centerLeft,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
+                                      )
+                                    : Center(
+                                        heightFactor: 5,
                                         child: Text(
-                                          'Order History',
-                                          style: TextStyle(
-                                            // color: Colors.pink.shade300,
-                                            fontSize: 25,
-                                            fontWeight: FontWeight.bold,
+                                          'No Pending Item',
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                Divider(),
+                                Container(
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        'Order History',
+                                        style: TextStyle(
+                                          // color: Colors.pink.shade300,
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    )),
+                                completedOrderDocs.length > 0
+                                    ? ConstrainedBox(
+                                        constraints: new BoxConstraints(
+                                          minHeight: 50.0,
+                                          maxHeight: 500.0,
+                                        ),
+                                        child: ListView.builder(
+                                          shrinkWrap: true,
+                                          itemCount: completedOrderDocs.length,
+                                          itemBuilder: (_, i) => OrderItem(
+                                            userStatus,
+                                            completedOrderDocs[i].id,
+                                            completedOrderDocs[i]['creatorId'],
+                                            completedOrderDocs[i]['status'],
+                                            completedOrderDocs[i]['amount'],
+                                            completedOrderDocs[i]['dateTime'],
+                                            completedOrderDocs[i]['productId'],
+                                            completedOrderDocs[i]['title'],
                                           ),
                                         ),
-                                      )),
-                                  completedOrderDocs.length > 0
-                                      ? ConstrainedBox(
-                                          constraints: new BoxConstraints(
-                                            minHeight: 50.0,
-                                            maxHeight: 500.0,
-                                          ),
-                                          child: ListView.builder(
-                                            shrinkWrap: true,
-                                            itemCount:
-                                                completedOrderDocs.length,
-                                            itemBuilder: (_, i) => OrderItem(
-                                              userStatus,
-                                              completedOrderDocs[i].id,
-                                              completedOrderDocs[i]
-                                                  ['creatorId'],
-                                              completedOrderDocs[i]['status'],
-                                              completedOrderDocs[i]['amount'],
-                                              completedOrderDocs[i]['dateTime'],
-                                              completedOrderDocs[i]
-                                                  ['productId'],
-                                              completedOrderDocs[i]['title'],
-                                            ),
-                                          ),
-                                        )
-                                      : Text('No Order History'),
-                                ],
-                              ),
-                            );
-                          } else {
-                            return Container();
-                          }
+                                      )
+                                    : Center(
+                                        heightFactor: 5,
+                                        child: Text(
+                                          'No Order History',
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                              ],
+                            ),
+                          );
                         }),
                   ),
                 ],

@@ -48,15 +48,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         title: Text('Dream Market'),
       ),
       body: StreamBuilder(
-        stream: productData[1]
-            ? FirebaseFirestore.instance
-                .collection('dream')
-                .doc(productId)
-                .snapshots()
-            : FirebaseFirestore.instance
-                .collection('products')
-                .doc(productId)
-                .snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('products')
+            .doc(productId)
+            .snapshots(),
         builder: (ctx, productSnapshot) {
           if (productSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

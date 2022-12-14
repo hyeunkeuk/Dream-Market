@@ -26,6 +26,9 @@ class OrderItem extends StatefulWidget {
 class _OrderItemState extends State<OrderItem> {
   var userData;
   var _isLoading = false;
+
+  var productData;
+
   void initState() {
     fetchUserData();
     super.initState();
@@ -38,6 +41,10 @@ class _OrderItemState extends State<OrderItem> {
     userData = await FirebaseFirestore.instance
         .collection('users')
         .doc(widget.creatorId)
+        .get();
+    productData = await FirebaseFirestore.instance
+        .collection('products')
+        .doc(widget.productId)
         .get();
     setState(() {
       _isLoading = false;
@@ -168,7 +175,10 @@ class _OrderItemState extends State<OrderItem> {
                                   primary: Colors.grey,
                                 ),
                           onPressed: () {
-                            updateProductAvailability();
+                            // Only update the product availability if the product is a market product
+                            if (productData['type'] == 'market') {
+                              updateProductAvailability();
+                            }
                             setState(() {
                               updateOrderStatus();
                             });

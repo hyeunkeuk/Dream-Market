@@ -40,6 +40,7 @@ class _ProductsGridState extends State<ProductsGrid> {
     return StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('products')
+            .where('type', isEqualTo: 'market')
             .orderBy('createdAt', descending: true)
             .snapshots(),
         builder: (ctx, productSnapshot) {
@@ -74,9 +75,16 @@ class _ProductsGridState extends State<ProductsGrid> {
                 return ProductItem(
                   widget.showDream,
                   selectedProduct[i].id,
-                  selectedProduct[i]['title'],
+                  selectedProduct[i]['category'],
+                  selectedProduct[i]['createdAt'],
+                  selectedProduct[i]['creatorId'],
+                  selectedProduct[i]['description'],
+                  selectedProduct[i]['imageUrl'],
+                  selectedProduct[i]['location'],
                   selectedProduct[i]['price'],
-                  selectedProduct[i]['imageUrl'][0],
+                  selectedProduct[i]['status'],
+                  selectedProduct[i]['title'],
+                  selectedProduct[i]['type'],
                 );
               },
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

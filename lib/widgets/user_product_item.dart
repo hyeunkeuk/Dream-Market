@@ -11,16 +11,31 @@ import '../providers/products.dart';
 class UserProductItem extends StatelessWidget {
   final bool isDreamProduct;
   final String id;
-  final String title;
-  // final File image;
-  final String imageUrl;
-  final num price;
-  final String description;
   final String category;
+  final Timestamp createdAt;
+  final String creatorId;
+  final String description;
+  final List imageUrl;
+  final String location;
+  final num price;
   final String status;
+  final String title;
+  final String type;
 
-  UserProductItem(this.isDreamProduct, this.id, this.title, this.imageUrl,
-      this.price, this.description, this.category, this.status);
+  UserProductItem(
+    this.isDreamProduct,
+    this.id,
+    this.category,
+    this.createdAt,
+    this.creatorId,
+    this.description,
+    this.imageUrl,
+    this.location,
+    this.price,
+    this.status,
+    this.title,
+    this.type,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +45,11 @@ class UserProductItem extends StatelessWidget {
     var storageReference =
         FirebaseStorage.instance.ref().child('product_image');
 
-    if (isDreamProduct) {
-      products = FirebaseFirestore.instance.collection('dream');
-      storageReference =
-          FirebaseStorage.instance.ref().child('dream_image/${id}');
-    }
+    // if (isDreamProduct) {
+    //   products = FirebaseFirestore.instance.collection('dream');
+    //   storageReference =
+    //       FirebaseStorage.instance.ref().child('dream_image/${id}');
+    // }
 
     final scaffold = Scaffold.of(context);
     return ListTile(
@@ -43,9 +58,9 @@ class UserProductItem extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(right: 10.0),
             child: CircleAvatar(
-              backgroundImage: imageUrl != null
-                  ? imageUrl != ''
-                      ? NetworkImage(imageUrl)
+              backgroundImage: imageUrl[0] != null
+                  ? imageUrl[0] != ''
+                      ? NetworkImage(imageUrl[0])
                       : null
                   : null,
             ),
