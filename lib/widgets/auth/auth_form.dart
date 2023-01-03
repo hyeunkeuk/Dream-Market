@@ -11,7 +11,8 @@ class AuthForm extends StatefulWidget {
   final bool isLoading;
   final void Function(
     String email,
-    String userName,
+    String firstName,
+    String lastName,
     String password,
     File imageFile,
     bool isLogin,
@@ -28,7 +29,8 @@ class _AuthFormState extends State<AuthForm> {
   final _formKey = GlobalKey<FormState>();
   var _isLogin = true;
   String _userEmail = '';
-  String _userUsername = '';
+  String _userFirstName = '';
+  String _userLastName = '';
   String _userPassword = '';
   String _confirmUserPassword = '';
 
@@ -55,7 +57,8 @@ class _AuthFormState extends State<AuthForm> {
       if (_isLogin || _confirmUserPassword == _userPassword) {
         widget.submitFn(
           _userEmail.trim(),
-          _userUsername.trim(),
+          _userFirstName.trim(),
+          _userLastName.trim(),
           _userPassword.trim(),
           _userImageFile,
           _isLogin,
@@ -72,7 +75,7 @@ class _AuthFormState extends State<AuthForm> {
             //   'Do you want to remove the item from your products?',
             // ),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.of(ctx).pop(false);
                 },
@@ -127,7 +130,7 @@ class _AuthFormState extends State<AuthForm> {
                   children: <Widget>[
                     if (!_isLogin) UserImagePicker(_pickedImage),
                     TextFormField(
-                      initialValue: 'khk208@hotmail.com',
+                      initialValue: 'gusrb0208@gmail.com',
                       key: ValueKey('email'),
                       validator: (value) {
                         if (value.isEmpty || !value.contains('@')) {
@@ -146,7 +149,6 @@ class _AuthFormState extends State<AuthForm> {
                     if (!_isLogin)
                       TextFormField(
                         autocorrect: false,
-                        // initialValue: 'keuk208',
                         key: ValueKey('first'),
                         validator: (value) {
                           if (value.isEmpty || value.length < 2) {
@@ -156,13 +158,12 @@ class _AuthFormState extends State<AuthForm> {
                         },
                         decoration: InputDecoration(labelText: 'First Name'),
                         onSaved: (value) {
-                          _userUsername = value;
+                          _userFirstName = value;
                         },
                       ),
                     if (!_isLogin)
                       TextFormField(
                         autocorrect: false,
-                        // initialValue: 'keuk208',
                         key: ValueKey('last'),
                         validator: (value) {
                           if (value.isEmpty) {
@@ -172,7 +173,7 @@ class _AuthFormState extends State<AuthForm> {
                         },
                         decoration: InputDecoration(labelText: 'Last Name'),
                         onSaved: (value) {
-                          _userUsername = value;
+                          _userLastName = value;
                         },
                       ),
                     // if (!_isLogin)
@@ -188,7 +189,7 @@ class _AuthFormState extends State<AuthForm> {
                     //     },
                     //     decoration: InputDecoration(labelText: 'Username'),
                     //     onSaved: (value) {
-                    //       _userUsername = value;
+                    //       _userFirstName = value;
                     //     },
                     //   ),
                     TextFormField(
@@ -226,15 +227,27 @@ class _AuthFormState extends State<AuthForm> {
                     SizedBox(height: 12),
                     if (widget.isLoading) CircularProgressIndicator(),
                     if (!widget.isLoading)
-                      RaisedButton(
-                          color: Colors.black,
-                          textColor: Colors.white,
-                          child: Text(_isLogin ? 'Login' : 'Signup'),
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).primaryTextTheme.button.color,
+                            textStyle: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
+                          child: Text(
+                            _isLogin ? 'Login' : 'Signup',
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
                           onPressed: _trySubmit),
                     if (!widget.isLoading)
-                      FlatButton(
+                      TextButton(
                         // color: Colors.black,
-                        textColor: Colors.black,
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.black,
+                        ),
                         // textColor: Theme.of(context).primaryColor,
                         child: Text(_isLogin
                             ? 'Create new account'

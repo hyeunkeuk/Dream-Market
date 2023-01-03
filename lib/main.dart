@@ -32,13 +32,15 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp();
 
-  print("Handling a background message: ${message.messageId}");
+  print("Handling a background message: ${message}");
 }
 
 void main() async {
-  //For Android only. Handling messages whilst the application is in the background\
-  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   WidgetsFlutterBinding.ensureInitialized();
+
+  //For Android only. Handling messages whilst the application is in the background\
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   await Firebase.initializeApp();
   runApp(MyApp());
 }

@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_core/firebase_core.dart';
@@ -13,69 +15,113 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  final user = FirebaseAuth.instance.currentUser;
   var toId;
   var _isInit = true;
+  var isLoading = false;
+
+  var chatRoomId;
+  var chatPartnerData;
+
+  CollectionReference chatRooms =
+      FirebaseFirestore.instance.collection('chatRooms');
+  CollectionReference usersList =
+      FirebaseFirestore.instance.collection('users');
+
+  // @override
+  // void initState() {
+  //   var chatData = ModalRoute.of(context).settings.arguments as List;
+  //   toId = chatData[0];
+  //   chatRoomId = chatData[1];
+  //   fetchDatabaseList();
+
+  //   super.initState();
+  // }
 
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     if (_isInit) {
-      toId = ModalRoute.of(context).settings.arguments as String;
+      var chatData = ModalRoute.of(context).settings.arguments as List;
+      toId = chatData[0];
+      chatRoomId = chatData[1];
+      fetchDatabaseList();
+      // getRoomId();
+
     }
     _isInit = false;
     super.didChangeDependencies();
   }
+
+  fetchDatabaseList() async {
+    isLoading = true;
+
+    dynamic resultant = await fetchUserData();
+
+    if (resultant == null) {
+      print('Unable to retrieve');
+    } else {
+      setState(() {
+        chatPartnerData = resultant;
+        isLoading = false;
+      });
+    }
+  }
+
+  Future fetchUserData() async {
+    isLoading = true;
+    try {
+      return await usersList.doc(toId).get();
+    } catch (error) {
+      print('im in message_bubble' + error.toString());
+      return null;
+    }
+  }
+
+  Future getUserData() async {
+    isLoading = true;
+
+    return await usersList.doc(toId).get();
+  }
+
+  // void getRoomId() async {
+  //   await chatRooms
+  //       .where('roomParticipants',
+  //           arrayContainsAny: ['${user.uid}_${toId}', '${toId}_${user.uid}'])
+  //       .get()
+  //       .then((QuerySnapshot querySnapshot) {
+  //         querySnapshot.docs.forEach((doc) {
+  //           chatRoomId = doc.id;
+  //         });
+  //       });
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
-        title: Text('Chat'),
-        // actions: [
-        //   DropdownButton(
-        //     icon: Icon(
-        //       Icons.more_vert,
-        //       color: Theme.of(context).primaryIconTheme.color,
-        //     ),
-        //     items: [
-        //       DropdownMenuItem(
-        //         child: Container(
-        //           child: Row(
-        //             // mainAxisAlignment: MainAxisAlignment.center,
-        //             mainAxisSize: MainAxisSize.min,
-        //             children: <Widget>[
-        //               Icon(
-        //                 Icons.exit_to_app,
-        //                 color: Theme.of(context).primaryColor,
-        //               ),
-        //               SizedBox(width: 8),
-        //               Text('Logout'),
-        //               // Padding(padding: EdgeInsets.all(10))
-        //             ],
-        //           ),
-        //           // width: 15,
-        //         ),
-        //         value: 'logout',
-        //       ),
-        //     ],
-        //     onChanged: (itemIdentifier) {
-        //       if (itemIdentifier == 'logout') {
-        //         FirebaseAuth.instance.signOut();
-        //       }
-        //     },
-        //   ),
-        // ],
+        title: isLoading
+            ? CircularProgressIndicator()
+            : Row(
+                children: [
+                  CircleAvatar(
+                    backgroundImage: chatPartnerData['imageUrl'] != ""
+                        ? NetworkImage(chatPartnerData['imageUrl'])
+                        : null,
+                  ),
+                  Text('  ${chatPartnerData['firstName']}'),
+                ],
+              ),
+        // title: Text('chat'),
       ),
       body: Container(
         child: Column(
           children: <Widget>[
             Expanded(
-              // child: Text('hi'),
-              child: Messages(toId),
+              child: Messages(chatRoomId, chatPartnerData['firstName']),
             ),
             NewMessage(toId),
-            Divider(),
           ],
         ),
       ),

@@ -4,51 +4,61 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 //Call from ChatScreen
-class Messages extends StatelessWidget {
-  final String toId;
-  Messages(this.toId);
+class Messages extends StatefulWidget {
+  final String chatRoomId;
+  final String chatPartnerName;
+  Messages(
+    this.chatRoomId,
+    this.chatPartnerName,
+  );
+
+  @override
+  State<Messages> createState() => _MessagesState();
+}
+
+class _MessagesState extends State<Messages> {
   final user = FirebaseAuth.instance.currentUser;
+
+  var chatMesssages = [];
+
+  CollectionReference chatRooms =
+      FirebaseFirestore.instance.collection('chatRooms');
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
-          .collection('chats')
-          // .where('participants', arrayContains: user.uid)
-          // .where('toId', isEqualTo: toId)
-          // .where('participants', arrayContains: toId)
-
-          .orderBy('createdAt', descending: true)
+          .collection('chatRooms')
+          .doc(widget.chatRoomId)
+          .collection('messages')
+          .orderBy('sentAt', descending: true)
           .snapshots(),
       builder: (ctx, chatSnapshot) {
         if (chatSnapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
-        }
-        // print('im in message' + chatSnapshot.toString());
+        } else if (chatSnapshot.connectionState == ConnectionState.active) {
+          var chatDocs = chatSnapshot.data.docs;
 
-        final chatDocs = chatSnapshot.data.docs;
-        // print('im in message' + chatDocs.toString());
-
-        if (chatDocs.isNotEmpty) {
-          return ListView.builder(
+          if (chatDocs.isNotEmpty) {
+            return ListView.builder(
               reverse: true,
               itemCount: chatDocs.length,
               itemBuilder: (ctx, index) {
-                // print('im in message' + chatDocs.length.toString());
-                if ((chatDocs[index]['fromId'] == user.uid &&
-                        chatDocs[index]['toId'] == toId) ||
-                    (chatDocs[index]['fromId'] == toId &&
-                        chatDocs[index]['toId'] == user.uid)) {
-                  return MessageBubble(
-                    chatDocs[index]['message'],
-                    chatDocs[index]['participants'][0], //sender.id
-                    chatDocs[index]['participants'][1], //recipient.id
-                    chatDocs[index]['participants'][0] == user.uid,
-                  );
-                } else {
-                  return Container();
-                }
-              });
+                return MessageBubble(
+                  chatDocs[index]['message'],
+                  chatDocs[index]['sentBy'], //sender.id
+                  chatDocs[index]['sentAt'],
+                  widget.chatPartnerName,
+                  chatDocs[index]['sentBy'] == user.uid,
+                );
+              },
+            );
+          } else {
+            return Container();
+          }
         } else {
+          print(chatSnapshot.connectionState);
+
           return Container();
         }
       },

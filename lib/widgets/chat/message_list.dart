@@ -1,18 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import './message_item.dart';
+// import './message_item.dart';
 import 'package:shopping/screens/chat/chat_screen.dart';
-
-// import 'package:provider/provider.dart';
-
-// import '../screens/edit_product_screen.dart';
-// import '../providers/products.dart';
-// import 'dart:io';
 
 //Call from message inbox screeen
 class MessageList extends StatelessWidget {
   final String senderId;
-  MessageList(this.senderId);
+  final String chatRoomId;
+
+  MessageList(
+    this.senderId,
+    this.chatRoomId,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +28,7 @@ class MessageList extends StatelessWidget {
           final senderDocs = senderSnapshot.data.data();
 
           if (senderDocs != null) {
-            String username = senderDocs['username'];
+            String username = senderDocs['firstName'];
             String imageUrl = senderDocs['imageUrl'];
             return ListTile(
                 title: Text(username),
@@ -40,8 +39,9 @@ class MessageList extends StatelessWidget {
                           : null
                       : null,
                 ),
-                onTap: () => Navigator.of(context)
-                    .pushNamed(ChatScreen.routeName, arguments: senderId));
+                onTap: () => Navigator.of(context).pushNamed(
+                    ChatScreen.routeName,
+                    arguments: [senderId, chatRoomId]));
           } else {
             return Container();
           }

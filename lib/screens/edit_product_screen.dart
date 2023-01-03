@@ -24,6 +24,7 @@ class EditProductScreen extends StatefulWidget {
 }
 
 class _EditProductScreenState extends State<EditProductScreen> {
+  var pageTitle;
   var user = FirebaseAuth.instance.currentUser;
   var products = FirebaseFirestore.instance.collection('products');
   final CollectionReference productsList =
@@ -173,6 +174,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     final productData =
         ModalRoute.of(context).settings.arguments as List<Object>;
     if (productData != null) {
+      pageTitle = "Edit";
       var productId = productData[0];
       try {
         return await productsList.doc(productId).get();
@@ -181,6 +183,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
         return null;
       }
     } else {
+      pageTitle = "Add";
       return null;
     }
   }
@@ -235,7 +238,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           title: Text('An error occured!'),
           content: Text('Please specify the categroy'),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               onPressed: () {
                 Navigator.of(ctx).pop();
               },
@@ -253,7 +256,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           title: Text('An error occured!'),
           content: Text('Please specify the location'),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               onPressed: () {
                 Navigator.of(ctx).pop();
               },
@@ -271,7 +274,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           title: Text('An error occured!'),
           content: Text('Please pick an image'),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               onPressed: () {
                 Navigator.of(ctx).pop();
               },
@@ -344,6 +347,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   'createdAt': Timestamp.now(),
                   'location': _editedProduct.location,
                   'status': _editedProduct.status,
+                  'type': userStatus == 'admin' ? 'dream' : 'market'
                 },
               );
 
@@ -383,11 +387,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   title: Text('An error occured!'),
                   content: Text(error.toString()),
                   actions: <Widget>[
-                    FlatButton(
+                    TextButton(
                       onPressed: () {
                         Navigator.of(ctx).pop();
                       },
-                      child: Text('Okay'),
+                      child: Text(
+                        'Okay',
+                        style: TextStyle(color: Colors.black),
+                      ),
                     ),
                   ],
                 ),
@@ -413,7 +420,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
-        title: Text('Edit Product'),
+        title: Text('${pageTitle} Product'),
         actions: <Widget>[
           IconButton(
             onPressed: _isLoading ? null : _saveForm,

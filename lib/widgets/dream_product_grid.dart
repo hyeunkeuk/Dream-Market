@@ -29,7 +29,7 @@ class _DreamProductsGridState extends State<DreamProductsGrid> {
   Widget build(BuildContext context) {
     final userFavoriteData = Provider.of<UserFavorite>(context, listen: false);
     final userFavoriteList = userFavoriteData.userFavoriteList;
-    var selectedProduct = [];
+    // var selectedProduct = [];
 
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
@@ -43,7 +43,7 @@ class _DreamProductsGridState extends State<DreamProductsGrid> {
             return const Center(child: CircularProgressIndicator());
           }
           final productDocs = productSnapshot.data.docs;
-
+          var selectedProduct = [];
           for (int idx = 0; idx < productDocs.length; idx++) {
             if (widget.showFavorites &&
                 userFavoriteList.contains(productDocs[idx].id)) {

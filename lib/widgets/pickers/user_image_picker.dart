@@ -68,18 +68,22 @@ class _UserImagePickerState extends State<UserImagePicker> {
         Column(
           children: [
             Container(
-              child: FlatButton.icon(
+              child: TextButton.icon(
                 icon: Icon(Icons.add_a_photo),
                 label: Text('Take Picture'),
-                textColor: Theme.of(context).primaryColor,
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).primaryColor,
+                ),
                 onPressed: _takePicture,
               ),
             ),
             Container(
-              child: FlatButton.icon(
+              child: TextButton.icon(
                 icon: Icon(Icons.add_photo_alternate),
                 label: Text('From Gallery'),
-                textColor: Theme.of(context).primaryColor,
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).primaryColor,
+                ),
                 onPressed: _getPicture,
               ),
             ),

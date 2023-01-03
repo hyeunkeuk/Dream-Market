@@ -117,7 +117,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                       'Do you want to order the following item(s)?',
                                     ),
                                     actions: <Widget>[
-                                      FlatButton(
+                                      TextButton(
                                         child: Text('Confirm'),
                                         onPressed: () async {
                                           final timestamp = DateTime.now();
@@ -152,7 +152,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                                       'Please send e-Transfer \$${productDocs['price']} to vancouverdreamchurch@gmail.com',
                                                     ),
                                                     actions: <Widget>[
-                                                      FlatButton(
+                                                      TextButton(
                                                           onPressed: () {
                                                             Navigator.of(ctx)
                                                                 .pop(false);
@@ -167,7 +167,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                                   ));
                                         },
                                       ),
-                                      FlatButton(
+                                      TextButton(
                                         onPressed: () {
                                           Navigator.of(ctx).pop(false);
                                         },
@@ -203,7 +203,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               : null,
                         ),
                         Text(
-                          '  ${creator['name']}',
+                          '  ${creator['firstName']}',
                           style: TextStyle(
                             color: Colors.indigo,
                             fontWeight: FontWeight.bold,

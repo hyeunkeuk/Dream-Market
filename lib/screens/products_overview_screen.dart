@@ -13,6 +13,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'notification/notification.dart';
 
 enum MarketOptions {
   Dream,
@@ -24,6 +25,7 @@ enum FilterOptions {
   Dream,
   All,
 }
+
 enum Categories {
   All,
   Baby,
@@ -32,101 +34,6 @@ enum Categories {
   Foods,
   Furnitures,
   Others,
-}
-
-Future<void> saveTokenToDatabase(String token) async {
-  // Assume user is logged in for this example
-  String userId = FirebaseAuth.instance.currentUser.uid;
-
-  await FirebaseFirestore.instance.collection('users').doc(userId).update({
-    'tokens': FieldValue.arrayUnion([token]),
-  });
-}
-
-Future<void> initializeFBM() async {
-  const AndroidNotificationChannel channel = AndroidNotificationChannel(
-    'high_importance_channel', // id
-    'High Importance Notifications', // title
-    // description: 'This channel is used for important notifications.', // description
-    importance: Importance.max,
-  );
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-      ?.createNotificationChannel(channel);
-
-  final fbm = FirebaseMessaging.instance;
-
-  NotificationSettings settings = await fbm.requestPermission(
-    alert: true,
-    announcement: false,
-    badge: true,
-    carPlay: false,
-    criticalAlert: false,
-    provisional: false,
-    sound: true,
-  );
-  print('User granted permission: ${settings.authorizationStatus}');
-  // // Get the token each time the application loads
-  // String token = await fbm.getToken();
-
-  // // Save the initial token to the database
-  // await saveTokenToDatabase(token);
-
-  // // Any time the token refreshes, store this in the database too.
-  // fbm.onTokenRefresh.listen(saveTokenToDatabase);
-
-  // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-  //   Map<String, String> data = message.data;
-
-  //   Owner owner = Owner.fromMap(jsonDecode(data['owner']));
-  //   User user = User.fromMap(jsonDecode(data['user']));
-  //   Picture picture = Picture.fromMap(jsonDecode(data['picture']));
-
-  //   print('The user ${user.name} liked your picture "${picture.title}"!');
-  // });
-
-  //This needs to be changed to be toggled
-  fbm.subscribeToTopic('products');
-  //Enabling foreground notification on iOS
-  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    alert: true, // Required to display a heads up notification
-    badge: true,
-    sound: true,
-  );
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print('Got a message whilst in the foreground!');
-    print('Message data: ${message.data}');
-
-    if (message.notification != null) {
-      print('Message also contained a notification: ${message.notification}');
-    }
-  });
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    RemoteNotification notification = message.notification;
-    AndroidNotification android = message.notification?.android;
-
-    // If `onMessage` is triggered with a notification, construct our own
-    // local notification to show to users using the created channel.
-    if (notification != null && android != null) {
-      flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              channel.id,
-              channel.name,
-              // channel.description,
-              icon: android?.smallIcon,
-              // other properties...
-            ),
-          ));
-    }
-  });
 }
 
 class ProductOverviewScreen extends StatefulWidget {
@@ -151,15 +58,16 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
 
   @override
   void initState() {
-    initializeFBM();
+    // initializeFBM();
     super.initState();
   }
 
-  Future<void> getUsername() async {
+  Future<void> getUserData() async {
     userData = await FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid)
         .get();
+
     // print(userData);
   }
 
@@ -168,8 +76,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         products.where('type', isEqualTo: 'dream').snapshots();
     var marketProductData =
         products.where('type', isEqualTo: 'market').snapshots();
-    print('dream: ${dreamProductData}');
-    print('market: ${marketProductData}');
+    // print('dream: ${dreamProductData}');
   }
 
   // @override
@@ -181,12 +88,14 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         });
       }
       // getAllProducts();
-      getUsername().then((value) {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
+      getUserData().then((value) {
+        initializeFBM(userData['status']).then((value) {
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+            });
+          }
+        });
       });
     }
 
@@ -316,7 +225,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
             // : AppDrawer('Dreamer'),
             : userData == null
                 ? AppDrawer('Dreamer')
-                : AppDrawer(userData['name']),
+                : AppDrawer(userData['firstName']),
         body: _isLoading
             ? Center(
                 child: CircularProgressIndicator(),

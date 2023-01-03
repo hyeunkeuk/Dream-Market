@@ -36,7 +36,8 @@ class _NewAuthScreenState extends State<NewAuthScreen> {
 
   void _submitAuthForm(
     String email,
-    String username,
+    String firstName,
+    String lastName,
     String password,
     File imageFile,
     bool isLogin,
@@ -59,11 +60,11 @@ class _NewAuthScreenState extends State<NewAuthScreen> {
         } catch (error) {
           String errorMessage = error.message.toString();
           if (errorMessage.contains('password is invalid')) {
-            print('im here');
+            // print('im here');
             errorMessage = 'The password is incorrect. Please try again.';
           }
           print(error);
-          Scaffold.of(ctx).showSnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(errorMessage),
               backgroundColor: Theme.of(ctx).errorColor,
@@ -98,7 +99,8 @@ class _NewAuthScreenState extends State<NewAuthScreen> {
             .doc(authResult.user.uid)
             .set({
           'email': email,
-          'username': username,
+          'firstName': firstName,
+          'lastName': lastName,
           'imageUrl': url,
           'status': 'dreamer',
         }).then((value) => Navigator.of(context).pushReplacement(
@@ -113,12 +115,13 @@ class _NewAuthScreenState extends State<NewAuthScreen> {
         print('error is null');
       }
       // print('hi');
-      Scaffold.of(ctx).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage),
           backgroundColor: Theme.of(ctx).errorColor,
         ),
       );
+
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -127,7 +130,7 @@ class _NewAuthScreenState extends State<NewAuthScreen> {
     } catch (error) {
       String errorMessage = error.message;
 
-      Scaffold.of(ctx).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage),
           backgroundColor: Theme.of(ctx).errorColor,

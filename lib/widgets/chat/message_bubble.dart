@@ -6,13 +6,15 @@ class MessageBubble extends StatefulWidget {
   MessageBubble(
     this.message,
     this.senderId,
-    this.recipientId,
+    this.sentAt,
+    this.chatPartnerName,
     this.isMe,
   );
 
   final String message;
   final String senderId;
-  final String recipientId;
+  final Timestamp sentAt;
+  final String chatPartnerName;
   final bool isMe;
 
   @override
@@ -30,8 +32,8 @@ class _MessageBubbleState extends State<MessageBubble> {
 
   @override
   void initState() {
-    super.initState();
     fetchDatabaseList();
+    super.initState();
   }
 
   fetchDatabaseList() async {
@@ -77,73 +79,78 @@ class _MessageBubbleState extends State<MessageBubble> {
                   child: CircularProgressIndicator(),
                 ),
               )
-        : Stack(
+        : Column(
             children: [
+              widget.isMe
+                  ? const SizedBox.shrink()
+                  : Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(widget.chatPartnerName,
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: widget.isMe
+                                    ? Colors.white
+                                    : Color.fromARGB(255, 105, 10, 113))),
+                      ),
+                    ),
               Row(
                 mainAxisAlignment: widget.isMe
                     ? MainAxisAlignment.end
                     : MainAxisAlignment.start,
                 children: [
-                  Container(
-                      decoration: BoxDecoration(
-                        color: widget.isMe
-                            ? Theme.of(context).accentColor
-                            : Colors.grey[300],
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(12),
-                          topRight: Radius.circular(12),
-                          bottomLeft: !widget.isMe
-                              ? Radius.circular(0)
-                              : Radius.circular(12),
-                          bottomRight: widget.isMe
-                              ? Radius.circular(0)
-                              : Radius.circular(12),
-                        ),
-                      ),
-                      width: 140,
-                      padding: EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 16,
-                      ),
-                      margin: EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 8,
-                      ),
-                      child: Column(
-                        children: <Widget>[
-                          Text(userData['username'],
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: widget.isMe
-                                      ? Colors.white
-                                      : Colors.black)),
-                          Text(
-                            widget.message,
-                            style: TextStyle(
-                              color: widget.isMe
-                                  ? Theme.of(context)
-                                      .accentTextTheme
-                                      .headline1
-                                      .color
-                                  : Colors.black,
-                            ),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: 200,
+                      minWidth: 70,
+                    ),
+                    child: Container(
+                        decoration: BoxDecoration(
+                          color: widget.isMe
+                              ? Theme.of(context).accentColor
+                              : Colors.grey[300],
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            topRight: Radius.circular(12),
+                            bottomLeft: !widget.isMe
+                                ? Radius.circular(0)
+                                : Radius.circular(12),
+                            bottomRight: widget.isMe
+                                ? Radius.circular(0)
+                                : Radius.circular(12),
                           ),
-                        ],
-                      )),
+                        ),
+                        // width: 140,
+                        padding: EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 16,
+                        ),
+                        margin: EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 8,
+                        ),
+                        child: Column(
+                          children: <Widget>[
+                            Text(
+                              widget.message,
+                              style: TextStyle(
+                                color: widget.isMe
+                                    ? Theme.of(context)
+                                        .accentTextTheme
+                                        .headline1
+                                        .color
+                                    : Colors.black,
+                              ),
+                            ),
+                          ],
+                        )),
+                  ),
                 ],
               ),
-              Positioned(
-                top: -10,
-                left: widget.isMe ? null : 120,
-                right: widget.isMe ? 120 : null,
-                child: CircleAvatar(
-                  backgroundImage: userData['imageUrl'] != ""
-                      ? NetworkImage(userData['imageUrl'])
-                      : null,
-                ),
-              ),
             ],
-            clipBehavior: Clip.none,
+            // clipBehavior: Clip.none,
           );
   }
 }

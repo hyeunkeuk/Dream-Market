@@ -87,77 +87,81 @@ class UserProductItem extends StatelessWidget {
               icon: const Icon(Icons.edit),
               color: Colors.black,
               // color: Theme.of(context).primaryColor,
-              onPressed: () {
-                Navigator.of(context)
-                    .pushNamed(EditProductScreen.routeName, arguments: [
-                  id,
-                  title,
-                  imageUrl,
-                  price,
-                  description,
-                  category,
-                ]);
-              },
+              onPressed: status == 'Available'
+                  ? () {
+                      Navigator.of(context)
+                          .pushNamed(EditProductScreen.routeName, arguments: [
+                        id,
+                        title,
+                        imageUrl,
+                        price,
+                        description,
+                        category,
+                      ]);
+                    }
+                  : null,
             ),
             IconButton(
               icon: const Icon(Icons.delete),
               color: Theme.of(context).errorColor,
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (ctx) => AlertDialog(
-                    title: Text(
-                      'Are you sure?',
-                    ),
-                    content: Text(
-                      'Do you want to remove the item from your products?',
-                    ),
-                    actions: <Widget>[
-                      FlatButton(
-                        onPressed: () {
-                          Navigator.of(ctx).pop(false);
-                        },
-                        child: Text('No'),
-                      ),
-                      FlatButton(
-                        onPressed: () async {
-                          Navigator.of(ctx).pop(false);
-                          try {
-                            await storageReference
-                                .child('${id}')
-                                .listAll()
-                                .then((value) {
-                              value.items.forEach((element) {
-                                FirebaseStorage.instance
-                                    .ref(element.fullPath)
-                                    .delete();
-                                // .then((value) => print('Storage Deleted'))
-                                // .catchError((error) => print(
-                                //     'Failed to delete the storage data: ${error}'));
-                              });
-                            });
+              onPressed: status == 'Available'
+                  ? () {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: Text(
+                            'Are you sure?',
+                          ),
+                          content: Text(
+                            'Do you want to remove the item from your products?',
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(ctx).pop(false);
+                              },
+                              child: Text('No'),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.of(ctx).pop(false);
+                                try {
+                                  await storageReference
+                                      .child('${id}')
+                                      .listAll()
+                                      .then((value) {
+                                    value.items.forEach((element) {
+                                      FirebaseStorage.instance
+                                          .ref(element.fullPath)
+                                          .delete();
+                                      // .then((value) => print('Storage Deleted'))
+                                      // .catchError((error) => print(
+                                      //     'Failed to delete the storage data: ${error}'));
+                                    });
+                                  });
 
-                            await products.doc(id).delete();
-                            // .then((_) => print('Product Deleted'))
-                            // .catchError((_) =>
-                            //     print('Failed to delete the product'));
-                          } catch (error) {
-                            scaffold.showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'Deleting failed',
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                        child: Text('Confirm'),
-                      ),
-                    ],
-                  ),
-                );
-              },
+                                  await products.doc(id).delete();
+                                  // .then((_) => print('Product Deleted'))
+                                  // .catchError((_) =>
+                                  //     print('Failed to delete the product'));
+                                } catch (error) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Deleting failed',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                              child: Text('Confirm'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  : null,
             ),
           ],
         ),

@@ -38,23 +38,28 @@ dependencies:
   path_provider: ^2.0.5
   path: ^1.8.0
   shared_preferences: ^2.0.8
-  firebase_storage: ^10.0.3
-  firebase_core: ^1.7.0
-  cloud_firestore: ^2.5.3
-  # firebase_auth: ^3.1.3
-  firebase_auth: ^3.3.3
+  # firebase_storage: ^10.0.3
+  firebase_storage: ^11.0.9 #Dec.22th/2022
+  # firebase_core: ^1.7.0
+  firebase_core: ^2.4.0 #Dec.22th/2022
+  # cloud_firestore: ^2.5.3
+  cloud_firestore: ^4.3.0 #Dec.22th/2022
+  # firebase_auth: ^3.3.3
+  firebase_auth: ^4.2.2 #Dec.22th/2022
   carousel_slider: ^4.0.0
   smooth_page_indicator: ^1.0.0+2
-  firebase_messaging: ^11.2.1
-  flutter_local_notifications: ^9.2.0
+  # firebase_messaging: ^11.2.1
+  firebase_messaging: ^14.2.0 #Dec.22th/2022
+  flutter_local_notifications: ^13.0.0 #Dec.27th/2022
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   provider: ^6.0.0
   # intl: ^0.15.8
-  intl: ^0.17.0
-  flutter_launcher_icons: ^0.11.0
+  # intl: ^0.17.0
+  intl: ^0.18.0 # added on Dec.20th/2022
+  flutter_launcher_icons: ^0.11.0 # added on Dec.20th/2022
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your

@@ -19,7 +19,11 @@ class AppDrawer extends StatelessWidget {
         children: <Widget>[
           AppBar(
             backgroundColor: Theme.of(context).primaryColor,
-            title: Text('Hello, ' + username + '!'),
+            title: Text(
+              'Hello, ' + username + '!',
+              // softWrap: true,
+              overflow: TextOverflow.fade,
+            ),
             automaticallyImplyLeading: false,
           ),
           Divider(),

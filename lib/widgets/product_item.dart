@@ -78,7 +78,7 @@ class _ProductItemState extends State<ProductItem> {
         .collection('users')
         .doc(widget.creatorId)
         .get();
-    // print(creator['name']);
+    // print(creator['firstName']);
 
     setState(() {
       _isLoading = false;
@@ -104,7 +104,7 @@ class _ProductItemState extends State<ProductItem> {
                         children: [
                           if (creator['status'] != 'admin')
                             Text(
-                              creator['name'],
+                              creator['firstName'],
                               textAlign: TextAlign.center,
                               style: TextStyle(color: Colors.white),
                             ),

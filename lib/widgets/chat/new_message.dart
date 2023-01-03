@@ -15,31 +15,59 @@ class _NewMessageState extends State<NewMessage> {
 
   void _sendMessage() async {
     FocusScope.of(context).unfocus();
-    final user = await FirebaseAuth.instance.currentUser;
-    final userdata = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .get();
+    final user = FirebaseAuth.instance.currentUser;
+    var chatRoomId;
+    CollectionReference chatRooms =
+        FirebaseFirestore.instance.collection('chatRooms');
 
-    var chatRef = await FirebaseFirestore.instance.collection('chats')
-        // .doc(user.uid)
-        // .collection(widget.toId)
-        .add(
+    await chatRooms
+        .where('roomParticipants', arrayContainsAny: [
+          '${user.uid}_${widget.toId}',
+          '${widget.toId}_${user.uid}'
+        ])
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+          querySnapshot.docs.forEach((doc) {
+            chatRoomId = doc.id;
+          });
+        });
+
+    if (chatRoomId == null) {
+      var chatroom = await chatRooms.add({
+        'participants': [user.uid, widget.toId],
+        'roomParticipants': [
+          '${user.uid}_${widget.toId}',
+          '${widget.toId}_${user.uid}'
+        ],
+        'readByRecipient': false,
+        'recentMessage': _enteredMessage,
+      });
+      chatRoomId = chatroom.id;
+    } else {
+      chatRooms.doc(chatRoomId).update({
+        'recentMessage': _enteredMessage,
+      });
+    }
+    chatRooms.doc(chatRoomId).collection('messages').add(
       {
-        'participants': [user.uid, widget.toId], //[sender.id, recipient.id]
         'message': _enteredMessage,
-        'createdAt': Timestamp.now(),
-        'fromId': user.uid,
-        'toId': widget.toId,
-        // 'username': userdata['username'],
-        // 'userImage': userdata['imageUrl'],
+        'sentAt': Timestamp.now(),
+        'sentBy': user.uid,
       },
     );
-    FirebaseFirestore.instance
-        .collection('chatsCollectionByUser')
-        .doc(user.uid)
-        .collection(widget.toId)
-        .add({'messageId': chatRef.id});
+
+    // var chatRef = await FirebaseFirestore.instance
+    //     .collection('messages')
+    //     .doc(chatRoomId)
+    //     .collection('messageTexts')
+    //     .add(
+    //   {
+    //     'message': _enteredMessage,
+    //     'sentAt': Timestamp.now(),
+    //     'sentBy': user.uid,
+    //   },
+    // );
+
     _controller.clear();
   }
 

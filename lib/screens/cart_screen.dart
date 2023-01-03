@@ -83,7 +83,7 @@ class _OrderButtonState extends State<OrderButton> {
   var _isloading = false;
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
+    return TextButton(
       child: _isloading ? CircularProgressIndicator() : Text('ORDER NOW'),
       onPressed: (widget.cart.totalAmount <= 0 || _isloading)
           ? null
@@ -101,7 +101,7 @@ class _OrderButtonState extends State<OrderButton> {
                     'Do you want to order the following item(s)?',
                   ),
                   actions: <Widget>[
-                    FlatButton(
+                    TextButton(
                       child: Text('Confirm'),
                       onPressed: () async {
                         await Provider.of<Orders>(context, listen: false)
@@ -121,7 +121,7 @@ class _OrderButtonState extends State<OrderButton> {
                                     'Please send e-Transfer \$${widget.cart.totalAmount} to vancouverdreamchurch@gmail.com',
                                   ),
                                   actions: <Widget>[
-                                    FlatButton(
+                                    TextButton(
                                         onPressed: () {
                                           Navigator.of(ctx).pop(false);
                                         },
@@ -130,7 +130,7 @@ class _OrderButtonState extends State<OrderButton> {
                                 )).then((value) => widget.cart.clear());
                       },
                     ),
-                    FlatButton(
+                    TextButton(
                       onPressed: () {
                         Navigator.of(ctx).pop(false);
                       },

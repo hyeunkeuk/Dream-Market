@@ -8,7 +8,7 @@ class MessageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String username = sender['username'];
+    String username = sender['firstName'];
     String imageUrl = sender['imageUrl'];
     print(sender);
     return ListTile(

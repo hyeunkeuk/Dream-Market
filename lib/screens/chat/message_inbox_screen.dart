@@ -32,51 +32,31 @@ class _MessageInboxScreenState extends State<MessageInboxScreen> {
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
-            .collection('chats')
-            // .where('participants', arrayContains: user.uid)
-            .orderBy('createdAt', descending: true)
+            .collection('chatRooms')
+            .where('participants', arrayContains: user.uid)
+            // .orderBy('createdAt', descending: true)
             .snapshots(),
         builder: (ctx, inboxSnapshot) {
           if (inboxSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
           final inboxDocs = inboxSnapshot.data.docs;
-          // print('im in message inbox' + inboxDocs.toString());
 
-          // print('im in message inbox screen' + inboxDocs[0].toString());
-
-          // var senderData = FirebaseFirestore.instance
-          //     .collection('users')
-          //     .doc(senderId)
-          //     .snapshots();
-
-          var chatPartnerId;
-          List<String> chatDictionary = [];
           if (inboxDocs.length > 0) {
             return ListView.builder(
                 itemCount: inboxDocs.length,
                 itemBuilder: (_, i) {
-                  if (inboxDocs[i]['participants'].contains(user.uid)) {
-                    int index = 0;
-
-                    if (user.uid == inboxDocs[i]['participants'][0]) {
-                      index = 1;
-                    }
-                    chatPartnerId = inboxDocs[i]['participants'][index];
-                    if (chatDictionary.contains(chatPartnerId)) {
-                      return Container();
-                    } else {
-                      chatDictionary.add(chatPartnerId);
-                      return Column(
-                        children: [
-                          MessageList(chatPartnerId),
-                          Divider(),
-                        ],
-                      );
-                    }
-                  } else {
-                    return Container();
+                  int index = 0;
+                  if (user.uid == inboxDocs[i]['participants'][0]) {
+                    index = 1;
                   }
+                  var chatPartnerId = inboxDocs[i]['participants'][index];
+                  return Column(
+                    children: [
+                      MessageList(chatPartnerId, inboxDocs[i].id),
+                      Divider(),
+                    ],
+                  );
                 });
           } else {
             return Container();

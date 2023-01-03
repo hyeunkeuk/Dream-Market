@@ -138,7 +138,7 @@ class _ProductImagePickerState extends State<ProductImagePicker> {
                         //   'Do you want to remove the item from your products?',
                         // ),
                         actions: <Widget>[
-                          FlatButton(
+                          TextButton(
                             child: Text('Set as a Main Image'),
                             onPressed: () {
                               Navigator.of(ctx).pop(false);
@@ -149,7 +149,7 @@ class _ProductImagePickerState extends State<ProductImagePicker> {
                               });
                             },
                           ),
-                          FlatButton(
+                          TextButton(
                             child: Text('Delete Image'),
                             onPressed: () async {
                               Navigator.of(ctx).pop(false);
@@ -158,7 +158,7 @@ class _ProductImagePickerState extends State<ProductImagePicker> {
                               });
                             },
                           ),
-                          FlatButton(
+                          TextButton(
                             child: Text('Cancel'),
                             onPressed: () {
                               Navigator.of(ctx).pop(false);
@@ -220,7 +220,7 @@ class _ProductImagePickerState extends State<ProductImagePicker> {
                                 //   'Do you want to remove the item from your products?',
                                 // ),
                                 actions: <Widget>[
-                                  FlatButton(
+                                  TextButton(
                                     child: Text('Set as a Main Image'),
                                     onPressed: () {
                                       Navigator.of(ctx).pop(false);
@@ -232,7 +232,7 @@ class _ProductImagePickerState extends State<ProductImagePicker> {
                                       });
                                     },
                                   ),
-                                  FlatButton(
+                                  TextButton(
                                     child: Text('Delete Image'),
                                     onPressed: () async {
                                       Navigator.of(ctx).pop(false);
@@ -241,7 +241,7 @@ class _ProductImagePickerState extends State<ProductImagePicker> {
                                       });
                                     },
                                   ),
-                                  FlatButton(
+                                  TextButton(
                                     child: Text('Cancel'),
                                     onPressed: () {
                                       Navigator.of(ctx).pop(false);

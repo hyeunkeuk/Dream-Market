@@ -108,7 +108,7 @@ class _OrderItemState extends State<OrderItem> {
                   ),
                   title: widget.userStatus == 'admin'
                       ? Text(
-                          '${userData['name']}\n${widget.title}\nAmount: \$${widget.amount}')
+                          '${userData['firstName']}\n${widget.title}\nAmount: \$${widget.amount}')
                       : Text('${widget.title}\nAmount: \$${widget.amount}'),
                   subtitle: Text(widget.dateTime),
                   trailing: widget.userStatus == 'admin'
@@ -136,13 +136,13 @@ class _OrderItemState extends State<OrderItem> {
                                         'Do you want to cancel the order?',
                                       ),
                                       actions: <Widget>[
-                                        FlatButton(
+                                        TextButton(
                                           onPressed: () {
                                             Navigator.of(ctx).pop(false);
                                           },
                                           child: Text('No'),
                                         ),
-                                        FlatButton(
+                                        TextButton(
                                           onPressed: () async {
                                             Navigator.of(ctx).pop(false);
                                             try {
@@ -206,13 +206,13 @@ class _OrderItemState extends State<OrderItem> {
                                       'Do you want to cancel the order?',
                                     ),
                                     actions: <Widget>[
-                                      FlatButton(
+                                      TextButton(
                                         onPressed: () {
                                           Navigator.of(ctx).pop(false);
                                         },
                                         child: Text('No'),
                                       ),
-                                      FlatButton(
+                                      TextButton(
                                         onPressed: () async {
                                           Navigator.of(ctx).pop(false);
                                           try {

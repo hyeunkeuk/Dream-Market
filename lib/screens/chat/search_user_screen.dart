@@ -72,7 +72,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
               child: ListView.builder(
                   itemCount: userProfileList.length,
                   itemBuilder: (ctx, index) {
-                    var username = userProfileList[index].data()['username'];
+                    var username = userProfileList[index].data()['firstName'];
                     var imageUrl = userProfileList[index].data()['imageUrl'];
                     var toId = userProfileList[index].id;
                     return Card(

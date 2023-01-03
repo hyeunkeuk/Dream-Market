@@ -52,7 +52,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
           mainAxisAlignment: MainAxisAlignment.center,
           // crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            FlatButton.icon(
+            TextButton.icon(
               onPressed: _pickImage,
               icon: Icon(Icons.add_a_photo, size: 20),
               label: Text(
@@ -62,7 +62,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
                 ),
               ),
             ),
-            FlatButton.icon(
+            TextButton.icon(
               onPressed: _getImage,
               icon: Icon(Icons.add_a_photo_rounded, size: 20),
               label: Text(
