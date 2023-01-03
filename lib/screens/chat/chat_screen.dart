@@ -53,19 +53,19 @@ class _ChatScreenState extends State<ChatScreen> {
     super.didChangeDependencies();
   }
 
-  fetchDatabaseList() async {
+  void fetchDatabaseList() async {
     isLoading = true;
 
-    dynamic resultant = await fetchUserData();
-
-    if (resultant == null) {
-      print('Unable to retrieve');
-    } else {
-      setState(() {
-        chatPartnerData = resultant;
-        isLoading = false;
-      });
-    }
+    dynamic resultant = await fetchUserData().then((value) {
+      if (value == null) {
+        print('Unable to retrieve');
+      } else {
+        setState(() {
+          chatPartnerData = value;
+          isLoading = false;
+        });
+      }
+    });
   }
 
   Future fetchUserData() async {
@@ -119,7 +119,9 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Column(
           children: <Widget>[
             Expanded(
-              child: Messages(chatRoomId, chatPartnerData['firstName']),
+              child: isLoading
+                  ? CircularProgressIndicator()
+                  : Messages(chatRoomId, chatPartnerData['firstName']),
             ),
             NewMessage(toId),
           ],

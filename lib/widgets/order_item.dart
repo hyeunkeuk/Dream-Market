@@ -5,6 +5,7 @@ import 'dart:math';
 import '../providers/orders.dart' as ord;
 import 'package:intl/intl.dart';
 import 'cart_item.dart';
+import 'package:shopping/screens/orders_screen.dart' as orderScreen;
 
 class OrderItem extends StatefulWidget {
   final String userStatus;
@@ -15,9 +16,19 @@ class OrderItem extends StatefulWidget {
   final String dateTime;
   final String productId;
   final String title;
+  final Function orderScreenSetstate;
 
-  OrderItem(this.userStatus, this.orderId, this.creatorId, this.status,
-      this.amount, this.dateTime, this.productId, this.title);
+  OrderItem(
+    this.userStatus,
+    this.orderId,
+    this.creatorId,
+    this.status,
+    this.amount,
+    this.dateTime,
+    this.productId,
+    this.title,
+    this.orderScreenSetstate,
+  );
 
   @override
   State<OrderItem> createState() => _OrderItemState();
@@ -38,6 +49,12 @@ class _OrderItemState extends State<OrderItem> {
     setState(() {
       _isLoading = true;
     });
+    // print('---------------------');
+    // print('im in fetchUserData');
+    // print(widget.orderId);
+    // print(widget.creatorId);
+    // print(widget.productId);
+
     userData = await FirebaseFirestore.instance
         .collection('users')
         .doc(widget.creatorId)
@@ -108,7 +125,7 @@ class _OrderItemState extends State<OrderItem> {
                   ),
                   title: widget.userStatus == 'admin'
                       ? Text(
-                          '${userData['firstName']}\n${widget.title}\nAmount: \$${widget.amount}')
+                          '${userData['firstName']} (${userData['email']})\n${widget.title}\nAmount: \$${widget.amount}')
                       : Text('${widget.title}\nAmount: \$${widget.amount}'),
                   subtitle: Text(widget.dateTime),
                   trailing: widget.userStatus == 'admin'
@@ -181,6 +198,8 @@ class _OrderItemState extends State<OrderItem> {
                             }
                             setState(() {
                               updateOrderStatus();
+                              _expanded = !_expanded;
+                              widget.orderScreenSetstate();
                             });
                           },
                           child: widget.status == 'pending'

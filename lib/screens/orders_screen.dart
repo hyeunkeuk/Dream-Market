@@ -27,14 +27,18 @@ class _OrderScreenState extends State<OrderScreen> {
   }
 
   Future<void> fetchUserData() async {
-    setState(() {
-      _isLoading = true;
+    _isLoading = true;
+    userData = await userList.doc(user.uid).get().then((value) {
+      userStatus = value['status'];
+
+      setState(() {
+        _isLoading = false;
+      });
     });
-    userData = await userList.doc(user.uid).get();
-    userStatus = userData['status'];
-    setState(() {
-      _isLoading = false;
-    });
+  }
+
+  void orderScreenSetstate() {
+    setState(() {});
   }
 
   @override
@@ -82,12 +86,13 @@ class _OrderScreenState extends State<OrderScreen> {
                           }
                           final orderDocs = orderSnapshot.data.docs;
 
-                          var pendingOrderDocs = new List();
-                          var completedOrderDocs = new List();
-
+                          var pendingOrderDocs = [];
+                          var completedOrderDocs = [];
                           for (var i = 0; i < orderDocs.length; i++) {
                             if (orderDocs[i]['status'] == 'pending') {
                               pendingOrderDocs.add(orderDocs[i]);
+                              // print(
+                              //     'pendingOrderDocs = ${orderDocs[i]['creatorId']}');
                             } else {
                               completedOrderDocs.add(orderDocs[i]);
                             }
@@ -127,6 +132,7 @@ class _OrderScreenState extends State<OrderScreen> {
                                             pendingOrderDocs[i]['dateTime'],
                                             pendingOrderDocs[i]['productId'],
                                             pendingOrderDocs[i]['title'],
+                                            orderScreenSetstate,
                                           ),
                                         ),
                                       )
@@ -169,6 +175,7 @@ class _OrderScreenState extends State<OrderScreen> {
                                             completedOrderDocs[i]['dateTime'],
                                             completedOrderDocs[i]['productId'],
                                             completedOrderDocs[i]['title'],
+                                            orderScreenSetstate,
                                           ),
                                         ),
                                       )
