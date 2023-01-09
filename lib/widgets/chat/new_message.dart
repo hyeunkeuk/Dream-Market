@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class NewMessage extends StatefulWidget {
   final String toId;
@@ -19,7 +20,9 @@ class _NewMessageState extends State<NewMessage> {
     var chatRoomId;
     CollectionReference chatRooms =
         FirebaseFirestore.instance.collection('chatRooms');
-
+    final timestamp = DateTime.now();
+    final messageTimeStamp =
+        DateFormat('yyyy-MM-dd HH:mm:ss.SSS').format(timestamp);
     await chatRooms
         .where('roomParticipants', arrayContainsAny: [
           '${user.uid}_${widget.toId}',
@@ -40,34 +43,27 @@ class _NewMessageState extends State<NewMessage> {
           '${widget.toId}_${user.uid}'
         ],
         'readByRecipient': false,
-        'recentMessage': _enteredMessage,
+        'lastMessage': _enteredMessage,
+        'lastMessageAt': messageTimeStamp,
+        'lastMessageFrom': user.uid,
       });
       chatRoomId = chatroom.id;
     } else {
       chatRooms.doc(chatRoomId).update({
-        'recentMessage': _enteredMessage,
+        'readByRecipient': false,
+        'lastMessage': _enteredMessage,
+        'lastMessageAt': messageTimeStamp,
+        'lastMessageFrom': user.uid,
       });
     }
     chatRooms.doc(chatRoomId).collection('messages').add(
       {
         'message': _enteredMessage,
-        'sentAt': Timestamp.now(),
+        'sentAt': messageTimeStamp,
         'sentBy': user.uid,
+        'toId': widget.toId,
       },
     );
-
-    // var chatRef = await FirebaseFirestore.instance
-    //     .collection('messages')
-    //     .doc(chatRoomId)
-    //     .collection('messageTexts')
-    //     .add(
-    //   {
-    //     'message': _enteredMessage,
-    //     'sentAt': Timestamp.now(),
-    //     'sentBy': user.uid,
-    //   },
-    // );
-
     _controller.clear();
   }
 

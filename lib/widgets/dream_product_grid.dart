@@ -63,6 +63,7 @@ class _DreamProductsGridState extends State<DreamProductsGrid> {
                   selectedProduct[i]['category'],
                   selectedProduct[i]['createdAt'],
                   selectedProduct[i]['creatorId'],
+                  selectedProduct[i]['creatorName'],
                   selectedProduct[i]['description'],
                   selectedProduct[i]['imageUrl'],
                   selectedProduct[i]['location'],

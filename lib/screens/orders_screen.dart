@@ -53,57 +53,43 @@ class _OrderScreenState extends State<OrderScreen> {
           : SingleChildScrollView(
               child: Column(
                 children: [
-                  // Container(
-                  //     alignment: Alignment.centerLeft,
-                  //     child: Padding(
-                  //       padding: const EdgeInsets.all(8.0),
-                  //       child: Text(
-                  //         'Pending Orders',
-                  //         style: TextStyle(
-                  //           // color: Colors.pink.shade300,
-                  //           fontSize: 25,
-                  //           fontWeight: FontWeight.bold,
-                  //         ),
-                  //       ),
-                  //     )),
                   SingleChildScrollView(
-                    child: StreamBuilder(
-                        stream: userStatus == 'admin'
-                            ? FirebaseFirestore.instance
-                                .collection('orders')
-                                .orderBy('dateTime', descending: true)
-                                .snapshots()
-                            : FirebaseFirestore.instance
-                                .collection('orders')
-                                .where('creatorId', isEqualTo: user.uid)
-                                .orderBy('dateTime', descending: true)
-                                .snapshots(),
-                        builder: (ctx, orderSnapshot) {
-                          if (orderSnapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          }
-                          final orderDocs = orderSnapshot.data.docs;
-
-                          var pendingOrderDocs = [];
-                          var completedOrderDocs = [];
-                          for (var i = 0; i < orderDocs.length; i++) {
-                            if (orderDocs[i]['status'] == 'pending') {
-                              pendingOrderDocs.add(orderDocs[i]);
-                              // print(
-                              //     'pendingOrderDocs = ${orderDocs[i]['creatorId']}');
-                            } else {
-                              completedOrderDocs.add(orderDocs[i]);
+                    child: Column(
+                      children: [
+                        StreamBuilder(
+                          stream: userStatus == 'admin'
+                              ? FirebaseFirestore.instance
+                                  .collection('orders')
+                                  .where('status', isEqualTo: 'pending')
+                                  .orderBy('dateModified', descending: true)
+                                  .snapshots()
+                              : FirebaseFirestore.instance
+                                  .collection('orders')
+                                  .where('status', isEqualTo: 'pending')
+                                  .where('creatorId', isEqualTo: user.uid)
+                                  .orderBy('dateModified', descending: true)
+                                  .snapshots(),
+                          builder: (ctx, orderSnapshot) {
+                            if (orderSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
                             }
-                          }
 
-                          return SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                Container(
+                            if (!orderSnapshot.hasData) {
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            final pendingOrderDocs = orderSnapshot.data.docs;
+
+                            return SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  Container(
                                     alignment: Alignment.centerLeft,
-                                    child: Padding(
+                                    child: const Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Text(
                                         'Pending Orders',
@@ -113,83 +99,141 @@ class _OrderScreenState extends State<OrderScreen> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                    )),
-                                pendingOrderDocs.length > 0
-                                    ? ConstrainedBox(
-                                        constraints: new BoxConstraints(
-                                          minHeight: 50.0,
-                                          maxHeight: 500.0,
-                                        ),
-                                        child: ListView.builder(
-                                          shrinkWrap: true,
-                                          itemCount: pendingOrderDocs.length,
-                                          itemBuilder: (_, i) => OrderItem(
-                                            userStatus,
-                                            pendingOrderDocs[i].id,
-                                            pendingOrderDocs[i]['creatorId'],
-                                            pendingOrderDocs[i]['status'],
-                                            pendingOrderDocs[i]['amount'],
-                                            pendingOrderDocs[i]['dateTime'],
-                                            pendingOrderDocs[i]['productId'],
-                                            pendingOrderDocs[i]['title'],
-                                            orderScreenSetstate,
+                                    ),
+                                  ),
+                                  pendingOrderDocs.length > 0
+                                      ? ConstrainedBox(
+                                          constraints: new BoxConstraints(
+                                            minHeight: 50.0,
+                                            maxHeight: 500.0,
+                                          ),
+                                          child: ListView.builder(
+                                            shrinkWrap: true,
+                                            itemCount: pendingOrderDocs.length,
+                                            itemBuilder: (_, i) {
+                                              return OrderItem(
+                                                userStatus,
+                                                pendingOrderDocs[i].id,
+                                                pendingOrderDocs[i]
+                                                    ['creatorId'],
+                                                pendingOrderDocs[i]
+                                                    ['creatorName'],
+                                                pendingOrderDocs[i]
+                                                    ['creatorEmail'],
+                                                pendingOrderDocs[i]['status'],
+                                                pendingOrderDocs[i]['amount'],
+                                                pendingOrderDocs[i]['dateTime'],
+                                                pendingOrderDocs[i]
+                                                    ['dateModified'],
+                                                pendingOrderDocs[i]
+                                                    ['productId'],
+                                                pendingOrderDocs[i]['title'],
+                                                orderScreenSetstate,
+                                              );
+                                            },
+                                          ),
+                                        )
+                                      : Center(
+                                          heightFactor: 5,
+                                          child: Text(
+                                            'No Pending Item',
+                                            textAlign: TextAlign.center,
                                           ),
                                         ),
-                                      )
-                                    : Center(
-                                        heightFactor: 5,
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                        StreamBuilder(
+                          stream: userStatus == 'admin'
+                              ? FirebaseFirestore.instance
+                                  .collection('orders')
+                                  .where('status', isEqualTo: 'accepted')
+                                  .orderBy('dateModified', descending: true)
+                                  .snapshots()
+                              : FirebaseFirestore.instance
+                                  .collection('orders')
+                                  .where('status', isEqualTo: 'accepted')
+                                  .where('creatorId', isEqualTo: user.uid)
+                                  .orderBy('dateModified', descending: true)
+                                  .snapshots(),
+                          builder: (ctx, orderSnapshot) {
+                            if (orderSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            if (!orderSnapshot.hasData) {
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+
+                            final completedOrderDocs = orderSnapshot.data.docs;
+
+                            return SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  Container(
+                                      alignment: Alignment.centerLeft,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
                                         child: Text(
-                                          'No Pending Item',
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                Divider(),
-                                Container(
-                                    alignment: Alignment.centerLeft,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        'Order History',
-                                        style: TextStyle(
-                                          // color: Colors.pink.shade300,
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    )),
-                                completedOrderDocs.length > 0
-                                    ? ConstrainedBox(
-                                        constraints: new BoxConstraints(
-                                          minHeight: 50.0,
-                                          maxHeight: 500.0,
-                                        ),
-                                        child: ListView.builder(
-                                          shrinkWrap: true,
-                                          itemCount: completedOrderDocs.length,
-                                          itemBuilder: (_, i) => OrderItem(
-                                            userStatus,
-                                            completedOrderDocs[i].id,
-                                            completedOrderDocs[i]['creatorId'],
-                                            completedOrderDocs[i]['status'],
-                                            completedOrderDocs[i]['amount'],
-                                            completedOrderDocs[i]['dateTime'],
-                                            completedOrderDocs[i]['productId'],
-                                            completedOrderDocs[i]['title'],
-                                            orderScreenSetstate,
+                                          'Order History',
+                                          style: TextStyle(
+                                            // color: Colors.pink.shade300,
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                      )
-                                    : Center(
-                                        heightFactor: 5,
-                                        child: Text(
-                                          'No Order History',
-                                          textAlign: TextAlign.center,
+                                      )),
+                                  completedOrderDocs.length > 0
+                                      ? ConstrainedBox(
+                                          constraints: new BoxConstraints(
+                                            minHeight: 50.0,
+                                            maxHeight: 500.0,
+                                          ),
+                                          child: ListView.builder(
+                                            shrinkWrap: true,
+                                            itemCount:
+                                                completedOrderDocs.length,
+                                            itemBuilder: (_, i) => OrderItem(
+                                              userStatus,
+                                              completedOrderDocs[i].id,
+                                              completedOrderDocs[i]
+                                                  ['creatorId'],
+                                              completedOrderDocs[i]
+                                                  ['creatorName'],
+                                              completedOrderDocs[i]
+                                                  ['creatorEmail'],
+                                              completedOrderDocs[i]['status'],
+                                              completedOrderDocs[i]['amount'],
+                                              completedOrderDocs[i]['dateTime'],
+                                              completedOrderDocs[i]
+                                                  ['dateModified'],
+                                              completedOrderDocs[i]
+                                                  ['productId'],
+                                              completedOrderDocs[i]['title'],
+                                              orderScreenSetstate,
+                                            ),
+                                          ),
+                                        )
+                                      : Center(
+                                          heightFactor: 5,
+                                          child: Text(
+                                            'No Order History',
+                                            textAlign: TextAlign.center,
+                                          ),
                                         ),
-                                      ),
-                              ],
-                            ),
-                          );
-                        }),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

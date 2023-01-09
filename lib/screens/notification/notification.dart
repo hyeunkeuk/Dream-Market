@@ -3,33 +3,28 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:cloud_functions/cloud_functions.dart';
+// import 'package:firebase_admin/firebase_admin.dart';
 
-Future<void> saveTokenToDatabase(String token) async {
-  // Assume user is logged in for this example
-  String userId = FirebaseAuth.instance.currentUser.uid;
-
-  await FirebaseFirestore.instance.collection('users').doc(userId).update({
-    'tokens': FieldValue.arrayUnion([token]),
-  });
-}
+// FirebaseFunctions functions = FirebaseFunctions.instance;
+// FirebaseAdmin admin = FirebaseAdmin.instance;
 
 Future<void> initializeFBM(userStatus) async {
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  var initializationSettingsAndroid =
+      AndroidInitializationSettings('mipmap/ic_launcher');
+  var initializationSettings =
+      InitializationSettings(android: initializationSettingsAndroid);
+  flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  setupInteractedMessage();
   const AndroidNotificationChannel channel = AndroidNotificationChannel(
     'high_importance_channel', // id
     'High Importance Notifications', // title
-    // description: 'This channel is used for important notifications.', // description
+    description:
+        'This channel is used for important notifications.', // description
     importance: Importance.max,
   );
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-  // var initializationSettingsAndroid = AndroidInitializationSettings(
-  //     'app_icon'); // <- default icon name is @mipmap/ic_launcher
-  // var initializationSettingsIOS = IOSInitializationSettings(
-  //     onDidReceiveLocalNotification: onDidReceiveLocalNotification);
-  // var initializationSettings = InitializationSettings(
-  //     initializationSettingsAndroid, initializationSettingsIOS);
-  // flutterLocalNotificationsPlugin.initialize(initializationSettings,
-  //     onSelectNotification: onSelectNotification);
 
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
@@ -57,24 +52,12 @@ Future<void> initializeFBM(userStatus) async {
   );
   print('User granted permission: ${settings.authorizationStatus}');
 
-  // // Get the token each time the application loads
-  // String token = await fbm.getToken();
-
-  // // Save the initial token to the database
-  // await saveTokenToDatabase(token);
-
-  // // Any time the token refreshes, store this in the database too.
-  // fbm.onTokenRefresh.listen(saveTokenToDatabase);
-
-  // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-  //   Map<String, String> data = message.data;
-
-  //   Owner owner = Owner.fromMap(jsonDecode(data['owner']));
-  //   User user = User.fromMap(jsonDecode(data['user']));
-  //   Picture picture = Picture.fromMap(jsonDecode(data['picture']));
-
-  //   print('The user ${user.name} liked your picture "${picture.title}"!');
-  // });
+  // Get the token each time the application loads
+  String token = await fbm.getToken();
+  // Save the initial token to the database
+  await saveTokenToDatabase(token);
+  // Any time the token refreshes, store this in the database too.
+  fbm.onTokenRefresh.listen(saveTokenToDatabase);
 
   //Enabling foreground notification on iOS
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
@@ -82,14 +65,6 @@ Future<void> initializeFBM(userStatus) async {
     badge: true,
     sound: true,
   );
-  // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-  //   print('Got a message whilst in the foreground!');
-  //   print('Message data: ${message.data}');
-
-  //   if (message.notification != null) {
-  //     print('Message also contained a notification: ${message.notification}');
-  //   }
-  // });
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     print("New Message has arrived: ${message}");
@@ -107,11 +82,49 @@ Future<void> initializeFBM(userStatus) async {
             android: AndroidNotificationDetails(
               channel.id,
               channel.name,
-              // channel.description,
+              channelDescription: channel.description,
               icon: android?.smallIcon,
               // other properties...
             ),
           ));
     }
   });
+}
+
+Future<void> saveTokenToDatabase(String token) async {
+  // Assume user is logged in for this example
+  String userId = FirebaseAuth.instance.currentUser.uid;
+
+  await FirebaseFirestore.instance.collection('users').doc(userId).update({
+    'tokens': FieldValue.arrayUnion([token]),
+  });
+}
+
+Future<void> setupInteractedMessage() async {
+  // Get any messages which caused the application to open from
+  // a terminated state.
+  RemoteMessage initialMessage =
+      await FirebaseMessaging.instance.getInitialMessage();
+
+  // If the message also contains a data property with a "type" of "chat",
+  // navigate to a chat screen
+  if (initialMessage != null) {
+    _handleMessage(initialMessage);
+  }
+
+  // Also handle any interaction when the app is in the background via a
+  // Stream listener
+  FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+}
+
+void _handleMessage(RemoteMessage message) {
+  BuildContext buildContext;
+
+  if (message.data['type'] == 'chat') {
+    Navigator.pushNamed(
+      buildContext,
+      '/chat',
+      arguments: (message),
+    );
+  }
 }

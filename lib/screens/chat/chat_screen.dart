@@ -18,7 +18,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final user = FirebaseAuth.instance.currentUser;
   var toId;
   var _isInit = true;
-  var isLoading = false;
+  var _isLoading = true;
 
   var chatRoomId;
   var chatPartnerData;
@@ -39,13 +39,20 @@ class _ChatScreenState extends State<ChatScreen> {
   // }
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     // TODO: implement didChangeDependencies
     if (_isInit) {
       var chatData = ModalRoute.of(context).settings.arguments as List;
       toId = chatData[0];
-      chatRoomId = chatData[1];
+      if (chatData[1] == "") {
+        await createChatRoom();
+      } else {
+        chatRoomId = chatData[1];
+      }
+      updateUserCurrentScreen();
+
       fetchDatabaseList();
+
       // getRoomId();
 
     }
@@ -53,8 +60,32 @@ class _ChatScreenState extends State<ChatScreen> {
     super.didChangeDependencies();
   }
 
+  void updateUserCurrentScreen() async {
+    usersList.doc(user.uid).update({
+      'chattingWith': toId,
+    });
+  }
+
+  void updateUserCurrentScreenToNull() async {
+    usersList.doc(user.uid).update({
+      'chattingWith': "",
+    });
+  }
+
+  void createChatRoom() async {
+    var chatRoom = await chatRooms.add({
+      'participants': [user.uid, toId],
+      'roomParticipants': ['${user.uid}_${toId}', '${toId}_${user.uid}'],
+      'readByRecipient': false,
+      'lastMessage': "",
+      'lastMessageAt': "",
+      'lastMessageFrom': "",
+    });
+    chatRoomId = chatRoom.id;
+  }
+
   void fetchDatabaseList() async {
-    isLoading = true;
+    // _isLoading = true;
 
     dynamic resultant = await fetchUserData().then((value) {
       if (value == null) {
@@ -62,14 +93,14 @@ class _ChatScreenState extends State<ChatScreen> {
       } else {
         setState(() {
           chatPartnerData = value;
-          isLoading = false;
+          _isLoading = false;
         });
       }
     });
   }
 
   Future fetchUserData() async {
-    isLoading = true;
+    // _isLoading = true;
     try {
       return await usersList.doc(toId).get();
     } catch (error) {
@@ -78,53 +109,48 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  Future getUserData() async {
-    isLoading = true;
-
-    return await usersList.doc(toId).get();
-  }
-
-  // void getRoomId() async {
-  //   await chatRooms
-  //       .where('roomParticipants',
-  //           arrayContainsAny: ['${user.uid}_${toId}', '${toId}_${user.uid}'])
-  //       .get()
-  //       .then((QuerySnapshot querySnapshot) {
-  //         querySnapshot.docs.forEach((doc) {
-  //           chatRoomId = doc.id;
-  //         });
-  //       });
-  // }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
-        title: isLoading
-            ? CircularProgressIndicator()
-            : Row(
-                children: [
-                  CircleAvatar(
-                    backgroundImage: chatPartnerData['imageUrl'] != ""
-                        ? NetworkImage(chatPartnerData['imageUrl'])
-                        : null,
-                  ),
-                  Text('  ${chatPartnerData['firstName']}'),
-                ],
+    return WillPopScope(
+      onWillPop: () async {
+        await updateUserCurrentScreenToNull();
+        Navigator.of(context).pop();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: new IconButton(
+            icon: new Icon(Icons.arrow_back),
+            onPressed: () async {
+              await updateUserCurrentScreenToNull();
+              Navigator.of(context).pop();
+            },
+          ),
+          backgroundColor: Theme.of(context).primaryColor,
+          title: _isLoading
+              ? CircularProgressIndicator()
+              : Row(
+                  children: [
+                    // CircleAvatar(
+                    //   backgroundImage: chatPartnerData['imageUrl'] != ""
+                    //       ? NetworkImage(chatPartnerData['imageUrl'])
+                    //       : null,
+                    // ),
+                    Text('${chatPartnerData['firstName']}'),
+                  ],
+                ),
+          // title: Text('chat'),
+        ),
+        body: Container(
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: _isLoading
+                    ? CircularProgressIndicator()
+                    : Messages(chatRoomId, chatPartnerData['firstName']),
               ),
-        // title: Text('chat'),
-      ),
-      body: Container(
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: isLoading
-                  ? CircularProgressIndicator()
-                  : Messages(chatRoomId, chatPartnerData['firstName']),
-            ),
-            NewMessage(toId),
-          ],
+              NewMessage(toId),
+            ],
+          ),
         ),
       ),
     );

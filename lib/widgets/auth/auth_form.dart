@@ -36,7 +36,7 @@ class _AuthFormState extends State<AuthForm> {
 
   File _userImageFile;
 
-  void _pickedImage(File image) {
+  void _pickedImage(File image) async {
     _userImageFile = image;
   }
 
@@ -128,9 +128,9 @@ class _AuthFormState extends State<AuthForm> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    if (!_isLogin) UserImagePicker(_pickedImage),
+                    // if (!_isLogin) UserImagePicker(_pickedImage),
                     TextFormField(
-                      initialValue: 'gusrb0208@gmail.com',
+                      // initialValue: 'gusrb0208@gmail.com',
                       key: ValueKey('email'),
                       validator: (value) {
                         if (value.isEmpty || !value.contains('@')) {
@@ -193,7 +193,7 @@ class _AuthFormState extends State<AuthForm> {
                     //     },
                     //   ),
                     TextFormField(
-                      initialValue: '890890890',
+                      // initialValue: '890890890'/,
                       key: ValueKey('password'),
                       validator: (value) {
                         if (value.isEmpty || value.length < 7) {

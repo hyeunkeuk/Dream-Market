@@ -13,7 +13,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:io';
 
 // import 'package:image_picker/image_picker.dart';
-import '../widgets/pickers/user_image_picker.dart';
+// import '../widgets/pickers/user_image_picker.dart';
 
 //called from user product item for edit
 //called from user product screen for add
@@ -335,6 +335,11 @@ class _EditProductScreenState extends State<EditProductScreen> {
               // }
               // print(collectionName);
 
+              var creatorData = await FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(user.uid)
+                  .get();
+
               var addedProduct =
                   await FirebaseFirestore.instance.collection('products').add(
                 {
@@ -343,6 +348,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   'imageUrl': _editedProduct.imageUrl,
                   'price': _editedProduct.price,
                   'creatorId': user.uid,
+                  'creatorName': creatorData.data()['firstName'],
                   'category': _editedProduct.category,
                   'createdAt': Timestamp.now(),
                   'location': _editedProduct.location,

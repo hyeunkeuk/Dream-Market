@@ -19,13 +19,12 @@ class Messages extends StatefulWidget {
 class _MessagesState extends State<Messages> {
   final user = FirebaseAuth.instance.currentUser;
 
-  var chatMesssages = [];
-
   CollectionReference chatRooms =
       FirebaseFirestore.instance.collection('chatRooms');
 
   @override
   Widget build(BuildContext context) {
+    print('chatRoomId: ${widget.chatRoomId}');
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('chatRooms')
@@ -38,7 +37,6 @@ class _MessagesState extends State<Messages> {
           return Center(child: CircularProgressIndicator());
         } else if (chatSnapshot.connectionState == ConnectionState.active) {
           var chatDocs = chatSnapshot.data.docs;
-
           if (chatDocs.isNotEmpty) {
             return ListView.builder(
               reverse: true,

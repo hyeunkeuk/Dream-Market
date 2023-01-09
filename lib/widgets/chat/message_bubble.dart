@@ -13,7 +13,7 @@ class MessageBubble extends StatefulWidget {
 
   final String message;
   final String senderId;
-  final Timestamp sentAt;
+  final String sentAt;
   final String chatPartnerName;
   final bool isMe;
 

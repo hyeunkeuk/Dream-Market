@@ -82,6 +82,7 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
                                     stream: FirebaseFirestore.instance
                                         .collection('products')
                                         .where('type', isEqualTo: 'dream')
+                                        .orderBy('status')
                                         .snapshots(),
                                     builder: (ctx, productSnapshot) {
                                       if (productSnapshot.connectionState ==
@@ -146,10 +147,12 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
                                   ? FirebaseFirestore.instance
                                       .collection('products')
                                       .where('type', isEqualTo: 'market')
+                                      // .orderBy('status')
                                       .snapshots()
                                   : FirebaseFirestore.instance
                                       .collection('products')
                                       .where('creatorId', isEqualTo: user.uid)
+                                      // .orderBy('status')
                                       .snapshots(),
                               builder: (ctx, productSnapshot) {
                                 if (productSnapshot.connectionState ==

@@ -14,6 +14,37 @@ class MessageInboxScreen extends StatefulWidget {
 
 class _MessageInboxScreenState extends State<MessageInboxScreen> {
   final user = FirebaseAuth.instance.currentUser;
+  CollectionReference userList = FirebaseFirestore.instance.collection('users');
+
+  var userData;
+  var userStatus;
+  bool _isLoading = false;
+
+  CollectionReference usersList =
+      FirebaseFirestore.instance.collection('users');
+  void initState() {
+    updateUserCurrentScreen();
+    fetchUserData();
+
+    super.initState();
+  }
+
+  Future<void> fetchUserData() async {
+    _isLoading = true;
+    userData = await userList.doc(user.uid).get().then((value) {
+      userStatus = value['status'];
+
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
+  void updateUserCurrentScreen() async {
+    usersList.doc(user.uid).update({
+      'chattingWith': "",
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,39 +61,61 @@ class _MessageInboxScreenState extends State<MessageInboxScreen> {
           ),
         ],
       ),
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('chatRooms')
-            .where('participants', arrayContains: user.uid)
-            // .orderBy('createdAt', descending: true)
-            .snapshots(),
-        builder: (ctx, inboxSnapshot) {
-          if (inboxSnapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final inboxDocs = inboxSnapshot.data.docs;
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : StreamBuilder(
+              stream: userStatus == 'admin'
+                  ? FirebaseFirestore.instance
+                      .collection('chatRooms')
+                      // .where('participants', arrayContains: user.uid)
+                      .orderBy('lastMessageAt', descending: true)
+                      .snapshots()
+                  : FirebaseFirestore.instance
+                      .collection('chatRooms')
+                      .where('participants', arrayContains: user.uid)
+                      .orderBy('lastMessageAt', descending: true)
+                      .snapshots(),
+              builder: (ctx, inboxSnapshot) {
+                if (inboxSnapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                final inboxDocs = inboxSnapshot.data.docs;
 
-          if (inboxDocs.length > 0) {
-            return ListView.builder(
-                itemCount: inboxDocs.length,
-                itemBuilder: (_, i) {
-                  int index = 0;
-                  if (user.uid == inboxDocs[i]['participants'][0]) {
-                    index = 1;
-                  }
-                  var chatPartnerId = inboxDocs[i]['participants'][index];
-                  return Column(
-                    children: [
-                      MessageList(chatPartnerId, inboxDocs[i].id),
-                      Divider(),
-                    ],
-                  );
-                });
-          } else {
-            return Container();
-          }
-        },
-      ),
+                if (inboxDocs.length > 0) {
+                  return ListView.builder(
+                      itemCount: inboxDocs.length,
+                      itemBuilder: (_, i) {
+                        if (inboxDocs[i]['lastMessageAt'] != "") {
+                          int index = 0;
+                          if (user.uid == inboxDocs[i]['participants'][0]) {
+                            index = 1;
+                          }
+                          var chatPartnerId =
+                              inboxDocs[i]['participants'][index];
+                          var forAdmin =
+                              inboxDocs[i]['participants'][1 - index];
+                          return Column(
+                            children: [
+                              MessageList(
+                                forAdmin,
+                                chatPartnerId,
+                                inboxDocs[i].id,
+                                inboxDocs[i]['lastMessage'],
+                                inboxDocs[i]['lastMessageAt'],
+                                inboxDocs[i]['lastMessageFrom'],
+                                inboxDocs[i]['readByRecipient'],
+                              ),
+                            ],
+                          );
+                        } else {
+                          return const SizedBox.shrink();
+                        }
+                      });
+                } else {
+                  return Container();
+                }
+              },
+            ),
     );
   }
 }

@@ -607,6 +607,10 @@ PODS:
     - firebase_core
     - Flutter
     - nanopb (< 2.30910.0, >= 2.30908.0)
+  - cloud_functions (4.0.7):
+    - Firebase/Functions (= 10.3.0)
+    - firebase_core
+    - Flutter
   - Firebase/Auth (10.3.0):
     - Firebase/CoreOnly
     - FirebaseAuth (~> 10.3.0)
@@ -615,6 +619,9 @@ PODS:
   - Firebase/Firestore (10.3.0):
     - Firebase/CoreOnly
     - FirebaseFirestore (~> 10.3.0)
+  - Firebase/Functions (10.3.0):
+    - Firebase/CoreOnly
+    - FirebaseFunctions (~> 10.3.0)
   - Firebase/Messaging (10.3.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 10.3.0)
@@ -625,7 +632,7 @@ PODS:
     - Firebase/Auth (= 10.3.0)
     - firebase_core
     - Flutter
-  - firebase_core (2.4.0):
+  - firebase_core (2.4.1):
     - Firebase/CoreOnly (= 10.3.0)
     - Flutter
   - firebase_messaging (14.2.0):
@@ -664,6 +671,14 @@ PODS:
     - "gRPC-C++ (~> 1.44.0)"
     - leveldb-library (~> 1.22)
     - nanopb (< 2.30910.0, >= 2.30908.0)
+  - FirebaseFunctions (10.3.0):
+    - FirebaseAppCheckInterop (~> 10.0)
+    - FirebaseAuthInterop (~> 10.0)
+    - FirebaseCore (~> 10.0)
+    - FirebaseCoreExtension (~> 10.0)
+    - FirebaseMessagingInterop (~> 10.0)
+    - FirebaseSharedSwift (~> 10.0)
+    - GTMSessionFetcher/Core (< 4.0, >= 2.1)
   - FirebaseInstallations (10.3.0):
     - FirebaseCore (~> 10.0)
     - GoogleUtilities/Environment (~> 7.8)
@@ -678,6 +693,8 @@ PODS:
     - GoogleUtilities/Reachability (~> 7.8)
     - GoogleUtilities/UserDefaults (~> 7.8)
     - nanopb (< 2.30910.0, >= 2.30908.0)
+  - FirebaseMessagingInterop (10.3.0)
+  - FirebaseSharedSwift (10.3.0)
   - FirebaseStorage (10.3.0):
     - FirebaseAppCheckInterop (~> 10.0)
     - FirebaseAuthInterop (~> 10.0)
@@ -782,6 +799,7 @@ PODS:
 
 DEPENDENCIES:
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
+  - cloud_functions (from `.symlinks/plugins/cloud_functions/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
@@ -804,8 +822,11 @@ SPEC REPOS:
     - FirebaseCoreExtension
     - FirebaseCoreInternal
     - FirebaseFirestore
+    - FirebaseFunctions
     - FirebaseInstallations
     - FirebaseMessaging
+    - FirebaseMessagingInterop
+    - FirebaseSharedSwift
     - FirebaseStorage
     - GoogleDataTransport
     - GoogleUtilities
@@ -820,6 +841,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   cloud_firestore:
     :path: ".symlinks/plugins/cloud_firestore/ios"
+  cloud_functions:
+    :path: ".symlinks/plugins/cloud_functions/ios"
   firebase_auth:
     :path: ".symlinks/plugins/firebase_auth/ios"
   firebase_core:
@@ -843,9 +866,10 @@ SPEC CHECKSUMS:
   abseil: ebe5b5529fb05d93a8bdb7951607be08b7fa71bc
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
   cloud_firestore: e6d4d16c6af7ecebd7254f12c3c1bb9bc87e5aca
+  cloud_functions: 6182195e30567bc6a081fb2b81c8563f548a4215
   Firebase: f92fc551ead69c94168d36c2b26188263860acd9
   firebase_auth: d1a0302ad8f1d642fc1cb53c43d25a951d70e190
-  firebase_core: 6f2f753e316765799d88568232ed59e300ff53db
+  firebase_core: bf59c32d2e53814f558efa20840c1902fa2fe461
   firebase_messaging: 048cb84d3f87969d37a6947b32d0009eaf6f6b3c
   firebase_storage: c361173a288f7c0322f58bdfb1075abb302bd063
   FirebaseAppCheckInterop: 9fc57dfa08f0abb737b185ea065422b55355c909
@@ -855,8 +879,11 @@ SPEC CHECKSUMS:
   FirebaseCoreExtension: 93d252fabdc9696bf14a73b04d84877ab9b3a832
   FirebaseCoreInternal: 29b76f784d607df8b2a1259d73c3f04f1210137b
   FirebaseFirestore: 244f71ff14ef44f39e00b44d356eac708ce03103
+  FirebaseFunctions: d8415d2237cc807d05fa0a921d645f50a0d9d803
   FirebaseInstallations: e2f26126089dcf41e215f7b8925af8d953c7d602
   FirebaseMessaging: e345b219fd15d325f0cf2fef28cb8ce00d851b3f
+  FirebaseMessagingInterop: 3c1f7b57edba1679aac310eb2330c7104343fad8
+  FirebaseSharedSwift: d82ad66b3f8de9dda19c77b9627cbcaad71e245e
   FirebaseStorage: 0efbff0ac978981866d89804191688ae50d64033
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743

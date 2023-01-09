@@ -78,6 +78,7 @@ class _ProductsGridState extends State<ProductsGrid> {
                   selectedProduct[i]['category'],
                   selectedProduct[i]['createdAt'],
                   selectedProduct[i]['creatorId'],
+                  selectedProduct[i]['creatorName'],
                   selectedProduct[i]['description'],
                   selectedProduct[i]['imageUrl'],
                   selectedProduct[i]['location'],

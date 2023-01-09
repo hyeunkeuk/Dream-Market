@@ -59,6 +59,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   @override
   void initState() {
     // initializeFBM();
+
     super.initState();
   }
 
@@ -126,8 +127,8 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
             isScrollable: false,
             onTap: (index) {},
             tabs: const [
-              Tab(icon: Icon(Icons.store_mall_directory_outlined)),
               Tab(icon: Icon(Icons.volunteer_activism)),
+              Tab(icon: Icon(Icons.store_mall_directory_outlined)),
             ],
           ),
           title: const Text(
@@ -232,8 +233,8 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
               )
             : TabBarView(
                 children: [
-                  DreamProductsGrid(true, _showFavorites),
                   ProductsGrid(false, choosenCategoryToSting, _showFavorites),
+                  DreamProductsGrid(true, _showFavorites),
                 ],
               ),
         floatingActionButton: FloatingActionButton(

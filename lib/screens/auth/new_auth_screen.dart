@@ -60,7 +60,6 @@ class _NewAuthScreenState extends State<NewAuthScreen> {
         } catch (error) {
           String errorMessage = error.message.toString();
           if (errorMessage.contains('password is invalid')) {
-            // print('im here');
             errorMessage = 'The password is incorrect. Please try again.';
           }
           print(error);

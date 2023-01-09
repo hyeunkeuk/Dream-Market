@@ -92,14 +92,19 @@ class _ProductImagePickerState extends State<ProductImagePicker> {
   }
 
   Future<void> _getPicture() async {
-    final imageFile = await picker.pickImage(
-      source: ImageSource.gallery,
-      maxWidth: 600,
-    );
+    final imageFiles = await picker.pickMultiImage(
+        // source: ImageSource.gallery,
+        // maxWidth: 600,
+        );
+    // print(imageFiles);
+
     if (mounted) {
       setState(() {
-        _storedImage = File(imageFile.path);
-        _listImage.insert(0, _storedImage);
+        imageFiles.forEach((imageFile) {
+          _storedImage = File(imageFile.path);
+          _listImage.insert(0, _storedImage);
+        });
+
         // print(_listImage);
       });
     }
@@ -127,7 +132,7 @@ class _ProductImagePickerState extends State<ProductImagePicker> {
               if (index != 9) {
                 return GestureDetector(
                   onTap: () {
-                    print('hi');
+                    // print('hi');
                     showDialog(
                       context: context,
                       builder: (ctx) => AlertDialog(
@@ -209,7 +214,7 @@ class _ProductImagePickerState extends State<ProductImagePicker> {
                   : _isLoading == false
                       ? GestureDetector(
                           onTap: () {
-                            print('hi');
+                            // print('hi');
                             showDialog(
                               context: context,
                               builder: (ctx) => AlertDialog(

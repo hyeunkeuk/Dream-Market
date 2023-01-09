@@ -22,19 +22,62 @@ class ProductDetailScreen extends StatefulWidget {
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   bool isMyProduct = false;
+  var _isInit = true;
+  var _isLoading = true;
+  var creator;
+  var productId;
+  var showDream;
+  var creatorId;
+  final user = FirebaseAuth.instance.currentUser;
+
+  final CollectionReference usersList =
+      FirebaseFirestore.instance.collection('users');
+
+  void updateUserCurrentScreen() async {
+    usersList.doc(user.uid).update({
+      'chattingWith': "",
+    });
+  }
 
   @override
   void initState() {
+    updateUserCurrentScreen();
     super.initState();
+  }
+
+  void didChangeDependencies() {
+    if (_isInit) {
+      if (mounted) {
+        setState(() {
+          _isLoading = true;
+        });
+      }
+      final productData = ModalRoute.of(context).settings.arguments as List;
+      productId = productData[0].toString();
+      showDream = productData[1];
+      creatorId = productData[2];
+      // getAllProducts();
+      getUserData().then((value) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+    }
+
+    super.didChangeDependencies();
+  }
+
+  Future<void> getUserData() async {
+    creator = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(creatorId)
+        .get();
+
+    // print(userData);
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
-    final productData = ModalRoute.of(context).settings.arguments as List;
-    final productId = productData[0].toString();
-    final showDream = productData[1];
-    final creator = productData[2];
     final cart = Provider.of<Cart>(context);
 
     final userFavoriteProvider = Provider.of<UserFavorite>(context);
@@ -68,12 +111,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    // crossAxisAlignment: CrossAxisAlignment.center,
-                    // mainAxisSize: MainAxisSize.max,
                     children: [
                       Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: 10,
+                          horizontal: 20,
                         ),
                         child: IconButton(
                           icon: userFavoriteProvider.isFavorite(
@@ -106,6 +147,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               icon: const Icon(
                                 Icons.shopping_cart,
                               ),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 25,
+                              ),
+                              color: Theme.of(context).accentColor,
                               onPressed: () async {
                                 showDialog(
                                   context: context,
@@ -118,28 +163,41 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     ),
                                     actions: <Widget>[
                                       TextButton(
-                                        child: Text('Confirm'),
+                                        child: Text(
+                                          'Confirm',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                         onPressed: () async {
                                           final timestamp = DateTime.now();
-                                          print(timestamp);
-                                          final orderTimeStamp =
-                                              DateFormat('yyyy-MM-dd EEE')
-                                                  .add_jm()
-                                                  .format(timestamp);
-                                          print(orderTimeStamp);
-
+                                          final orderTimeStamp = DateFormat(
+                                                  'yyyy-MM-dd HH:mm:ss.SSS')
+                                              .add_jm()
+                                              .format(timestamp);
                                           await FirebaseFirestore.instance
-                                              .collection('orders')
-                                              .add(
-                                            {
-                                              'creatorId': user.uid,
-                                              'amount': productDocs['price'],
-                                              'dateTime': orderTimeStamp,
-                                              'title': productDocs['title'],
-                                              'productId': productId,
-                                              'status': 'pending'
-                                            },
-                                          );
+                                              .collection('users')
+                                              .doc(user.uid)
+                                              .get()
+                                              .then((userData) async {
+                                            await FirebaseFirestore.instance
+                                                .collection('orders')
+                                                .add(
+                                              {
+                                                'creatorId': user.uid,
+                                                'creatorName':
+                                                    userData['firstName'],
+                                                'creatorEmail':
+                                                    userData['email'],
+                                                'dateModified': orderTimeStamp,
+                                                'amount': productDocs['price'],
+                                                'dateTime': orderTimeStamp,
+                                                'title': productDocs['title'],
+                                                'productId': productId,
+                                                'status': 'pending'
+                                              },
+                                            );
+                                          });
 
                                           Navigator.of(ctx).pop(false);
 
@@ -153,16 +211,23 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                                     ),
                                                     actions: <Widget>[
                                                       TextButton(
-                                                          onPressed: () {
-                                                            Navigator.of(ctx)
-                                                                .pop(false);
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pushNamed(
-                                                                    OrderScreen
-                                                                        .routeName);
-                                                          },
-                                                          child: Text('Okay'))
+                                                        onPressed: () {
+                                                          Navigator.of(ctx)
+                                                              .pop(false);
+                                                          Navigator.of(context)
+                                                              .pushNamed(
+                                                                  OrderScreen
+                                                                      .routeName);
+                                                        },
+                                                        child: Text(
+                                                          'Okay',
+                                                          style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                      ),
                                                     ],
                                                   ));
                                         },
@@ -171,13 +236,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                         onPressed: () {
                                           Navigator.of(ctx).pop(false);
                                         },
-                                        child: Text('No'),
+                                        child: Text(
+                                          'No',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                       ),
                                     ],
                                   ),
                                 );
                               },
-                              color: Theme.of(context).accentColor,
                             )
                           : Container(
                               padding: EdgeInsets.symmetric(
@@ -194,27 +263,46 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        CircleAvatar(
-                          backgroundColor: Colors.indigo.shade100,
-                          backgroundImage: creator['imageUrl'] != null
-                              ? creator['imageUrl'] != ''
-                                  ? NetworkImage(creator['imageUrl'])
-                                  : null
-                              : null,
-                        ),
-                        Text(
-                          '  ${creator['firstName']}',
-                          style: TextStyle(
-                            color: Colors.indigo,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        // _isLoading
+                        //     ? CircularProgressIndicator()
+                        //     : CircleAvatar(
+                        //         backgroundColor: Colors.indigo.shade100,
+                        //         backgroundImage: creator['imageUrl'] != null
+                        //             ? creator['imageUrl'] != ''
+                        //                 ? NetworkImage(creator['imageUrl'])
+                        //                 : null
+                        //             : null,
+                        //       ),
+                        _isLoading
+                            ? CircularProgressIndicator()
+                            : Text(
+                                '  ${creator['firstName']}',
+                                style: TextStyle(
+                                  color: Colors.indigo,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                         Spacer(),
                         ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.indigo.shade300,
+                          ),
+                          // onHover: (value) {
+                          //   st
+                          // },
                           child: productDocs['creatorId'] == user.uid
-                              ? Text('Edit')
-                              : Text('Chat'),
-                          onPressed: () {
+                              ? Text(
+                                  'Edit',
+                                  style: TextStyle(color: Colors.white),
+                                )
+                              : Text(
+                                  'Chat',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                          onPressed: () async {
+                            CollectionReference chatRooms = FirebaseFirestore
+                                .instance
+                                .collection('chatRooms');
                             productDocs['creatorId'] == user.uid
                                 ? Navigator.of(context).pushNamed(
                                     EditProductScreen.routeName,
@@ -226,9 +314,23 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                         productDocs['description'],
                                         productDocs['category'],
                                       ])
-                                : Navigator.of(context).pushNamed(
-                                    ChatScreen.routeName,
-                                    arguments: productDocs['creatorId']);
+                                : await chatRooms
+                                    .where('roomParticipants',
+                                        arrayContainsAny: [
+                                          '${user.uid}_${productDocs['creatorId']}',
+                                          '${productDocs['creatorId']}_${user.uid}'
+                                        ])
+                                    .get()
+                                    .then((value) {
+                                      Navigator.of(context).pushNamed(
+                                          ChatScreen.routeName,
+                                          arguments: [
+                                            productDocs['creatorId'],
+                                            value.docs.isEmpty
+                                                ? ""
+                                                : value.docs.first.id,
+                                          ]);
+                                    });
                           },
                         ),
                       ],

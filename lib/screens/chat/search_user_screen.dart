@@ -17,6 +17,12 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
   final CollectionReference usersList =
       FirebaseFirestore.instance.collection('users');
 
+  void updateUserCurrentScreen() async {
+    usersList.doc(user.uid).update({
+      'chattingWith': "",
+    });
+  }
+
   List userProfileList;
 
   var isLoading = false;
@@ -25,6 +31,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
   void initState() {
     super.initState();
     fetchDatabaseList();
+    updateUserCurrentScreen();
   }
 
   fetchDatabaseList() async {
@@ -77,19 +84,35 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                     var toId = userProfileList[index].id;
                     return Card(
                       child: ListTile(
-                        title: Text(username),
-                        leading: CircleAvatar(
-                          backgroundImage: imageUrl != null
-                              ? imageUrl != ''
-                                  ? NetworkImage(imageUrl)
-                                  : null
-                              : null,
-                        ),
-                        onTap: () => Navigator.of(context).pushReplacementNamed(
-                          ChatScreen.routeName,
-                          arguments: toId,
-                        ),
-                      ),
+                          title: Text(username),
+                          // leading: CircleAvatar(
+                          //   backgroundImage: imageUrl != null
+                          //       ? imageUrl != ''
+                          //           ? NetworkImage(imageUrl)
+                          //           : null
+                          //       : null,
+                          // ),
+                          onTap: () async {
+                            CollectionReference chatRooms = FirebaseFirestore
+                                .instance
+                                .collection('chatRooms');
+                            await chatRooms
+                                .where('roomParticipants', arrayContainsAny: [
+                                  '${user.uid}_${toId}',
+                                  '${toId}_${user.uid}'
+                                ])
+                                .get()
+                                .then((value) {
+                                  Navigator.of(context).pushNamed(
+                                      ChatScreen.routeName,
+                                      arguments: [
+                                        toId,
+                                        value.docs.isEmpty
+                                            ? ""
+                                            : value.docs.first.id,
+                                      ]);
+                                });
+                          }),
                     );
                   }),
             ),

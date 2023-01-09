@@ -34,7 +34,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   http: ^0.13.3
-  image_picker: ^0.8.4+2
+  image_picker: ^0.8.6
   path_provider: ^2.0.5
   path: ^1.8.0
   shared_preferences: ^2.0.8
@@ -51,6 +51,8 @@ dependencies:
   # firebase_messaging: ^11.2.1
   firebase_messaging: ^14.2.0 #Dec.22th/2022
   flutter_local_notifications: ^13.0.0 #Dec.27th/2022
+  cloud_functions: ^4.0.7
+  firebase_admin: ^0.2.0-dev.7
 
 dev_dependencies:
   flutter_test:

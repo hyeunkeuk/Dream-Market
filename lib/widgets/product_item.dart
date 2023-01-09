@@ -16,6 +16,7 @@ class ProductItem extends StatefulWidget {
   final String category;
   final Timestamp createdAt;
   final String creatorId;
+  final String creatorName;
   final String description;
   final List imageUrl;
   final String location;
@@ -30,6 +31,7 @@ class ProductItem extends StatefulWidget {
     this.category,
     this.createdAt,
     this.creatorId,
+    this.creatorName,
     this.description,
     this.imageUrl,
     this.location,
@@ -97,14 +99,14 @@ class _ProductItemState extends State<ProductItem> {
         : ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: GridTile(
-              header: creator['status'] != 'admin'
+              header: widget.type == 'market'
                   ? GridTileBar(
                       backgroundColor: Colors.black54,
                       leading: Row(
                         children: [
-                          if (creator['status'] != 'admin')
+                          if (widget.type == 'market')
                             Text(
-                              creator['firstName'],
+                              widget.creatorName,
                               textAlign: TextAlign.center,
                               style: TextStyle(color: Colors.white),
                             ),
@@ -112,7 +114,7 @@ class _ProductItemState extends State<ProductItem> {
                       ),
                       title: Text(
                           ""), // provide empty space in the middle at the top banner
-                      trailing: creator['status'] != 'admin'
+                      trailing: widget.type == 'market'
                           ? Text(
                               widget.location,
                               textAlign: TextAlign.right,
@@ -132,7 +134,7 @@ class _ProductItemState extends State<ProductItem> {
                     arguments: [
                       widget.id,
                       widget.showDream,
-                      creator,
+                      widget.creatorId,
                     ],
                   );
                 },

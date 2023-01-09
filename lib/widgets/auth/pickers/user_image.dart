@@ -1,42 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart' as syspaths;
+import 'package:path/path.dart';
+
+// import 'package:path/path.dart' as path;
+// import 'package:path_provider/path_provider.dart' as syspaths;
 
 class UserImagePicker extends StatefulWidget {
-  UserImagePicker(this.imagePickFn);
   final void Function(File pickedImage) imagePickFn;
+  UserImagePicker(this.imagePickFn);
   @override
   _UserImagePickerState createState() => _UserImagePickerState();
 }
 
 class _UserImagePickerState extends State<UserImagePicker> {
-  XFile _pickedImage;
-  final ImagePicker _picker = ImagePicker();
+  File _pickedImage;
+  final picker = ImagePicker();
 
   void _pickImage() async {
-    final pickedImageFile = await _picker.pickImage(
+    final pickedImageFile = await picker.pickImage(
       source: ImageSource.camera,
       imageQuality: 50,
       maxWidth: 150,
     );
     setState(() {
-      _pickedImage = pickedImageFile;
+      _pickedImage = File(pickedImageFile.path);
     });
-    widget.imagePickFn(File(pickedImageFile.path));
+    widget.imagePickFn(_pickedImage);
   }
 
-  void _getImage() async {
-    final pickedImageFile = await _picker.pickImage(
+  Future<void> _getImage() async {
+    final pickedImageFile = await picker.pickImage(
       source: ImageSource.gallery,
-      imageQuality: 50,
-      maxWidth: 150,
+      // imageQuality: 50,
+      // maxWidth: 150,
+      // maxWidth: 600,
     );
-    setState(() {
-      _pickedImage = pickedImageFile;
-    });
-    widget.imagePickFn(File(pickedImageFile.path));
+    if (_pickedImage != null) {
+      setState(() {
+        _pickedImage = File(pickedImageFile.path);
+      });
+      widget.imagePickFn(_pickedImage);
+    }
   }
 
   @override
@@ -46,7 +51,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
         CircleAvatar(
           radius: 50,
           backgroundImage:
-              _pickedImage != null ? FileImage(File(_pickedImage.path)) : null,
+              _pickedImage != null ? FileImage(_pickedImage) : null,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -63,7 +68,9 @@ class _UserImagePickerState extends State<UserImagePicker> {
               ),
             ),
             TextButton.icon(
-              onPressed: _getImage,
+              onPressed: () {
+                _getImage();
+              },
               icon: Icon(Icons.add_a_photo_rounded, size: 20),
               label: Text(
                 'Library',
