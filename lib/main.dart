@@ -69,7 +69,9 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'Dream Market',
+        debugShowCheckedModeBanner: false,
+
+        title: 'Dream Square',
         theme: ThemeData(
           buttonColor: Colors.black,
           primarySwatch: Colors.grey,

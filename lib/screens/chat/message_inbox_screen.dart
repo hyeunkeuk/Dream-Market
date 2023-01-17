@@ -55,7 +55,41 @@ class _MessageInboxScreenState extends State<MessageInboxScreen> {
         actions: <Widget>[
           IconButton(
             onPressed: () {
-              Navigator.of(context).pushNamed(SearchUserScreen.routeName);
+              showDialog(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: Text(
+                    'REMINDER!',
+                  ),
+                  content: Text(
+                    'Please note that all chat data are being monitored. Do you want to proceed?',
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () async {
+                        Navigator.of(ctx).pop(false);
+                        Navigator.of(context)
+                            .pushNamed(SearchUserScreen.routeName);
+                      },
+                      child: Text(
+                        'Yes',
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        Navigator.of(ctx).pop(false);
+                      },
+                      child: Text(
+                        'No',
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              );
             },
             icon: const Icon(Icons.add),
           ),

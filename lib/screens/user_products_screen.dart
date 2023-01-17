@@ -49,7 +49,41 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
           actions: <Widget>[
             IconButton(
               onPressed: () {
-                Navigator.of(context).pushNamed(EditProductScreen.routeName);
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: Text(
+                      'REMINDER!',
+                    ),
+                    content: Text(
+                      'Please note that you are donating your item to Vancouver Dream Church to raise mission funds.\nAll the profit of your item goes to Vancouver Dream Church Mission Fund.\nDo you agree?',
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () async {
+                          Navigator.of(ctx).pop(false);
+                          Navigator.of(context)
+                              .pushNamed(EditProductScreen.routeName);
+                        },
+                        child: Text(
+                          'I Agree',
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          Navigator.of(ctx).pop(false);
+                        },
+                        child: Text(
+                          'No',
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
               },
               icon: const Icon(Icons.add),
             ),

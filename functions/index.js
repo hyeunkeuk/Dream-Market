@@ -4,16 +4,65 @@ const admin = require("firebase-admin");
 
 admin.initializeApp();
 
-exports.orderFunction = functions.firestore
+exports.productFunction = functions.firestore
+    .document("products/{docId}")
+    .onCreate((snapshot, context) => {
+      const payload = {
+        notification: {
+          title: "New Product Has Been Uploaded!",
+          body: snapshot.data().title,
+          clickAction: "FLUTTER_NOTIFICATION_CLICK",
+        },
+      };
+      return admin.messaging().sendToTopic("products", payload)
+          .then((response) => {
+            console.log("Successfully sent message:", response);
+          }).catch((error) => {
+            console.log("Error sending message:", error);
+          });
+    });
+
+exports.orderCreateFunction = functions.firestore
     .document("orders/{docId}")
     .onCreate((snapshot, context) => {
-      return admin.messaging().sendToTopic("orders", {
+      console.log("----------------start function--------------------");
+      const doc = snapshot.data();
+      console.log(doc);
+      // admin.firestore().collection("users")
+      //     .doc(doc.productOwnerId).get().then((querySnapshot) => {
+      //       const productOwnerData = querySnapshot.data();
+      //       if (productOwnerData.status !== "admin") {
+      //         const payload = {
+      //           notification: {
+      //             title: "Your Product Has Been Requested!",
+      //             // body: contentMessage,
+      //             clickAction: "FLUTTER_NOTIFICATION_CLICK",
+      //             // badge: '1',
+      //             sound: "default",
+      //           },
+      //         };
+      //         admin.messaging()
+      //             .sendToDevice(productOwnerData.tokens, payload)
+      //             .then((response) => {
+      //               console.log("Successfully sent message:", response);
+      //             }).catch((error) => {
+      //               console.log("Error sending message:", error);
+      //             });
+      //       }
+      //     });
+      const payload = {
         notification: {
           title: "New Order Has Been Requested!",
           body: snapshot.data().title,
           clickAction: "FLUTTER_NOTIFICATION_CLICK",
         },
-      });
+      };
+      return admin.messaging().sendToTopic("orders", payload)
+          .then((response) => {
+            console.log("Successfully sent message:", response);
+          }).catch((error) => {
+            console.log("Error sending message:", error);
+          });
     });
 
 exports.orderUpdateFunction = functions.firestore
@@ -23,13 +72,36 @@ exports.orderUpdateFunction = functions.firestore
       const doc = snapshot.after.data();
       console.log(doc);
       const creatorId = doc.creatorId;
+      const productOwnerId = doc.productOwnerId;
       return admin.firestore().collection("users")
-          .doc(creatorId).get().then((querySnapshot) => {
+          .doc(creatorId).get().then((OrderCreatorQuerySnapshot) => {
             console.log("------------------------------------");
-            console.log(querySnapshot.data());
+            console.log(OrderCreatorQuerySnapshot.data());
+            const OrderCreatorData = OrderCreatorQuerySnapshot.data();
+            admin.firestore().collection("users")
+                .doc(productOwnerId).get()
+                .then((productOwenerQuerySnapshot) => {
+                  const productOwnerData = productOwenerQuerySnapshot.data();
+                  const payload = {
+                    notification: {
+                      title: "Your Product Availability Has Been Updated!",
+                      // body: contentMessage,
+                      clickAction: "FLUTTER_NOTIFICATION_CLICK",
+                      // badge: '1',
+                      sound: "default",
+                    },
+                  };
+                  admin.messaging()
+                      .sendToDevice(productOwnerData.tokens, payload)
+                      .then((response) => {
+                        console.log("Successfully sent message to product owner:", response);
+                      }).catch((error) => {
+                        console.log("Error sending message:", error);
+                      });
+                });
             const payload = {
               notification: {
-                title: "Your Order Has Been Updated!",
+                title: "Your Order Status Has Been Updated!",
                 // body: contentMessage,
                 clickAction: "FLUTTER_NOTIFICATION_CLICK",
                 // badge: '1',
@@ -37,9 +109,9 @@ exports.orderUpdateFunction = functions.firestore
               },
             };
             admin.messaging()
-                .sendToDevice(querySnapshot.data().tokens, payload)
+                .sendToDevice(OrderCreatorData.tokens, payload)
                 .then((response) => {
-                  console.log("Successfully sent message:", response);
+                  console.log("Successfully sent message to order requestor:", response);
                 }).catch((error) => {
                   console.log("Error sending message:", error);
                 });

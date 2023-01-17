@@ -132,7 +132,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
             ],
           ),
           title: const Text(
-            'Dream Market',
+            'Dream Square',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontWeight: FontWeight.w800,

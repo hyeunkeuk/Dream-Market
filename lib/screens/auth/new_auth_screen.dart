@@ -201,7 +201,7 @@ class _NewAuthScreenState extends State<NewAuthScreen> {
                         ],
                       ),
                       child: Text(
-                        'Dream Market',
+                        'Dream Square',
                         style: TextStyle(
                           // color: Colors.pink.shade300,
                           fontSize: 25,

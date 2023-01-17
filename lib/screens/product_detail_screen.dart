@@ -88,7 +88,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
-        title: Text('Dream Market'),
+        title: Text('Dream Square'),
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
@@ -194,6 +194,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                                 'dateTime': orderTimeStamp,
                                                 'title': productDocs['title'],
                                                 'productId': productId,
+                                                'productOwnerId':
+                                                    productDocs['creatorId'],
                                                 'status': 'pending'
                                               },
                                             );
@@ -202,34 +204,33 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                           Navigator.of(ctx).pop(false);
 
                                           showDialog(
-                                              context: context,
-                                              builder: (ctx) => AlertDialog(
-                                                    title: Text(
-                                                        'Order Instruction'),
-                                                    content: Text(
-                                                      'Please send e-Transfer \$${productDocs['price']} to vancouverdreamchurch@gmail.com',
+                                            context: context,
+                                            builder: (ctx) => AlertDialog(
+                                              title: Text('Order Instruction'),
+                                              content: Text(
+                                                'Please send e-Transfer \$${productDocs['price']} to vdcfund@gmail.com',
+                                              ),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(ctx)
+                                                        .pop(false);
+                                                    Navigator.of(context)
+                                                        .pushNamed(OrderScreen
+                                                            .routeName);
+                                                  },
+                                                  child: Text(
+                                                    'Okay',
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
-                                                    actions: <Widget>[
-                                                      TextButton(
-                                                        onPressed: () {
-                                                          Navigator.of(ctx)
-                                                              .pop(false);
-                                                          Navigator.of(context)
-                                                              .pushNamed(
-                                                                  OrderScreen
-                                                                      .routeName);
-                                                        },
-                                                        child: Text(
-                                                          'Okay',
-                                                          style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ));
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
                                         },
                                       ),
                                       TextButton(
@@ -321,16 +322,58 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                           '${productDocs['creatorId']}_${user.uid}'
                                         ])
                                     .get()
-                                    .then((value) {
-                                      Navigator.of(context).pushNamed(
-                                          ChatScreen.routeName,
-                                          arguments: [
-                                            productDocs['creatorId'],
-                                            value.docs.isEmpty
-                                                ? ""
-                                                : value.docs.first.id,
-                                          ]);
-                                    });
+                                    .then(
+                                      (value) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (ctx) => AlertDialog(
+                                            title: Text(
+                                              'REMINDER!',
+                                            ),
+                                            content: Text(
+                                              'Please note that all chat data are being monitored. Do you want to proceed?',
+                                            ),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () async {
+                                                  Navigator.of(ctx).pop(false);
+                                                  Navigator.of(context)
+                                                      .pushNamed(
+                                                          ChatScreen.routeName,
+                                                          arguments: [
+                                                        productDocs[
+                                                            'creatorId'],
+                                                        value.docs.isEmpty
+                                                            ? ""
+                                                            : value
+                                                                .docs.first.id,
+                                                      ]);
+                                                },
+                                                child: Text(
+                                                  'Yes',
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              TextButton(
+                                                onPressed: () async {
+                                                  Navigator.of(ctx).pop(false);
+                                                },
+                                                child: Text(
+                                                  'No',
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    );
                           },
                         ),
                       ],

@@ -35,10 +35,10 @@ Future<void> initializeFBM(userStatus) async {
   //This needs to be changed to be toggled
   if (userStatus == "admin") {
     fbm.subscribeToTopic('orders');
-    print("subscribed");
+    fbm.subscribeToTopic('products');
   } else {
     fbm.unsubscribeFromTopic('orders');
-    print("unsubscribed");
+    fbm.unsubscribeFromTopic('products');
   }
 
   NotificationSettings settings = await fbm.requestPermission(
