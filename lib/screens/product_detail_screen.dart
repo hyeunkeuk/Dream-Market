@@ -411,16 +411,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               //   textAlign: TextAlign.start,
                               //   softWrap: true,
                               // ),
-                              Text(
+                              SelectableText(
                                 productDocs['description'],
                                 // textAlign: TextAlign.center,
-                                softWrap: true,
+                                // softWrap: true,
                               ),
                             ],
                           ),
                         ),
                       ),
                     ),
+                  ),
+                  SizedBox(
+                    height: 10,
                   ),
                 ],
               ),

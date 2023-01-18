@@ -87,7 +87,10 @@ class _MessageBubbleState extends State<MessageBubble> {
                       padding: const EdgeInsets.only(left: 8.0),
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Text(widget.chatPartnerName,
+                        child: Text(
+                            widget.chatPartnerName == ""
+                                ? userData['firstName']
+                                : widget.chatPartnerName,
                             textAlign: TextAlign.left,
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,

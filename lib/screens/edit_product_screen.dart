@@ -35,6 +35,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlFocusNode = FocusNode();
   List<File> _productImageList;
   final _form = GlobalKey<FormState>();
+  bool showDone = false;
+
   var _editedProduct = Product(
     id: null,
     title: '',
@@ -592,10 +594,40 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           ),
                         ],
                       ),
+                      showDone
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          Color.fromARGB(255, 191, 219, 241)),
+                                  onPressed: () {
+                                    setState(() {
+                                      showDone = false;
+                                    });
+                                    FocusScope.of(context)
+                                        .requestFocus(new FocusNode());
+                                    // FocusScopeNode currentFocus = FocusScope.of(context);
+                                  },
+                                  child: Text('Done'),
+                                ),
+                              ],
+                            )
+                          : SizedBox.shrink(),
                       TextFormField(
+                        onTap: () {
+                          setState(() {
+                            showDone = true;
+                          });
+                        },
                         initialValue: _initValues['description'],
-                        decoration: InputDecoration(labelText: 'Description'),
-                        maxLines: 3,
+                        decoration: InputDecoration(
+                          labelText: 'Description',
+                          border: OutlineInputBorder(),
+                        ),
+                        minLines: 3,
+                        maxLines: 10,
                         keyboardType: TextInputType.multiline,
                         focusNode: _descriptionFocusNode,
                         validator: (value) {

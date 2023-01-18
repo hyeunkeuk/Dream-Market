@@ -55,8 +55,23 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
                     title: Text(
                       'REMINDER!',
                     ),
-                    content: Text(
-                      'Please note that you are donating your item to Vancouver Dream Church to raise mission funds.\nAll the profit of your item goes to Vancouver Dream Church Mission Fund.\nDo you agree?',
+                    content: SizedBox(
+                      height: 180,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Please note that you are donating your item to Vancouver Dream Church.',
+                          ),
+                          Text(
+                            '\nAll the profit of your item goes to Vancouver Dream Church.',
+                          ),
+                          Text(
+                            '\nDo you agree?',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
                     ),
                     actions: <Widget>[
                       TextButton(

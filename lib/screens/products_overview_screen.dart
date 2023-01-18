@@ -16,6 +16,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'notification/notification.dart';
+import 'package:shopping/screens/edit_product_screen.dart';
 
 enum MarketOptions {
   Dream,
@@ -149,6 +150,61 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
             ),
           ),
           actions: <Widget>[
+            IconButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: Text(
+                      'REMINDER!',
+                    ),
+                    content: SizedBox(
+                      height: 180,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Please note that you are donating your item to Vancouver Dream Church.',
+                          ),
+                          Text(
+                            '\nAll the profit of your item goes to Vancouver Dream Church.',
+                          ),
+                          Text(
+                            '\nDo you agree?',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () async {
+                          Navigator.of(ctx).pop(false);
+                          Navigator.of(context)
+                              .pushNamed(EditProductScreen.routeName);
+                        },
+                        child: Text(
+                          'I Agree',
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          Navigator.of(ctx).pop(false);
+                        },
+                        child: Text(
+                          'No',
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              icon: const Icon(Icons.add),
+            ),
             PopupMenuButton(
               onSelected: (Categories selectedValue) {
                 if (mounted) {

@@ -18,48 +18,79 @@ class Messages extends StatefulWidget {
 
 class _MessagesState extends State<Messages> {
   final user = FirebaseAuth.instance.currentUser;
-
+  bool _isLoading = false;
+  var userStatus;
   CollectionReference chatRooms =
       FirebaseFirestore.instance.collection('chatRooms');
+
+  void initState() {
+    super.initState();
+    getUserData();
+  }
+
+  Future<void> getUserData() async {
+    _isLoading = true;
+
+    final userData = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    setState(() {
+      userStatus = userData['status'];
+    });
+    _isLoading = false;
+  }
 
   @override
   Widget build(BuildContext context) {
     print('chatRoomId: ${widget.chatRoomId}');
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('chatRooms')
-          .doc(widget.chatRoomId)
-          .collection('messages')
-          .orderBy('sentAt', descending: true)
-          .snapshots(),
-      builder: (ctx, chatSnapshot) {
-        if (chatSnapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (chatSnapshot.connectionState == ConnectionState.active) {
-          var chatDocs = chatSnapshot.data.docs;
-          if (chatDocs.isNotEmpty) {
-            return ListView.builder(
-              reverse: true,
-              itemCount: chatDocs.length,
-              itemBuilder: (ctx, index) {
-                return MessageBubble(
-                  chatDocs[index]['message'],
-                  chatDocs[index]['sentBy'], //sender.id
-                  chatDocs[index]['sentAt'],
-                  widget.chatPartnerName,
-                  chatDocs[index]['sentBy'] == user.uid,
-                );
-              },
-            );
-          } else {
-            return Container();
-          }
-        } else {
-          print(chatSnapshot.connectionState);
+    return _isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('chatRooms')
+                .doc(widget.chatRoomId)
+                .collection('messages')
+                .orderBy('sentAt', descending: true)
+                .snapshots(),
+            builder: (ctx, chatSnapshot) {
+              if (chatSnapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (chatSnapshot.connectionState ==
+                  ConnectionState.active) {
+                var chatDocs = chatSnapshot.data.docs;
+                if (chatDocs.isNotEmpty) {
+                  return ListView.builder(
+                    reverse: true,
+                    itemCount: chatDocs.length,
+                    itemBuilder: (ctx, index) {
+                      return userStatus == 'admin'
+                          ? MessageBubble(
+                              chatDocs[index]['message'],
+                              chatDocs[index]['sentBy'], //sender.id
+                              chatDocs[index]['sentAt'],
+                              "",
+                              chatDocs[index]['sentBy'] == user.uid,
+                            )
+                          : MessageBubble(
+                              chatDocs[index]['message'],
+                              chatDocs[index]['sentBy'], //sender.id
+                              chatDocs[index]['sentAt'],
+                              widget.chatPartnerName,
+                              chatDocs[index]['sentBy'] == user.uid,
+                            );
+                    },
+                  );
+                } else {
+                  return Container();
+                }
+              } else {
+                print(chatSnapshot.connectionState);
 
-          return Container();
-        }
-      },
-    );
+                return Container();
+              }
+            },
+          );
   }
 }

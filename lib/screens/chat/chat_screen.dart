@@ -14,7 +14,7 @@ class ChatScreen extends StatefulWidget {
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   final user = FirebaseAuth.instance.currentUser;
   var toId;
   var _isInit = true;
@@ -37,6 +37,39 @@ class _ChatScreenState extends State<ChatScreen> {
 
   //   super.initState();
   // }
+  AppLifecycleState _notification;
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        updateUserCurrentScreen();
+        break;
+      case AppLifecycleState.inactive:
+        updateUserCurrentScreenToNull();
+        break;
+      case AppLifecycleState.paused:
+        updateUserCurrentScreenToNull();
+        break;
+      case AppLifecycleState.detached:
+        updateUserCurrentScreenToNull();
+        break;
+    }
+    // setState(() {
+    //   _notification = state;
+    // });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance?.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
+    super.dispose();
+  }
 
   @override
   void didChangeDependencies() async {
