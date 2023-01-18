@@ -33,12 +33,16 @@ Future<void> initializeFBM(userStatus) async {
 
   final fbm = FirebaseMessaging.instance;
   //This needs to be changed to be toggled
+  fbm.subscribeToTopic('products');
+
   if (userStatus == "admin") {
     fbm.subscribeToTopic('orders');
-    fbm.subscribeToTopic('products');
+    // fbm.subscribeToTopic('products');
+    fbm.subscribeToTopic('delete');
   } else {
     fbm.unsubscribeFromTopic('orders');
-    fbm.unsubscribeFromTopic('products');
+    // fbm.unsubscribeFromTopic('products');
+    fbm.unsubscribeFromTopic('delete');
   }
 
   NotificationSettings settings = await fbm.requestPermission(

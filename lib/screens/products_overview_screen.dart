@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
+// import 'package:path/path.dart';
+import 'package:path/path.dart' as Path;
 import 'package:provider/provider.dart';
+import 'package:shopping/screens/account_deleted_screen.dart';
 import 'package:shopping/screens/chat/message_inbox_screen.dart';
 import '../widgets/product_grid.dart';
 import '../widgets/dream_product_grid.dart';
@@ -89,7 +91,15 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         });
       }
       // getAllProducts();
+      // BuildContext context;
       getUserData().then((value) {
+        if (userData['status'] == 'deleted') {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => AccountDeletedScreen(),
+            ),
+          );
+        }
         initializeFBM(userData['status']).then((value) {
           if (mounted) {
             setState(() {
@@ -225,8 +235,8 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
               )
             // : AppDrawer('Dreamer'),
             : userData == null
-                ? AppDrawer('Dreamer')
-                : AppDrawer(userData['firstName']),
+                ? AppDrawer('Dreamer', userData['status'])
+                : AppDrawer(userData['firstName'], userData['status']),
         body: _isLoading
             ? Center(
                 child: CircularProgressIndicator(),

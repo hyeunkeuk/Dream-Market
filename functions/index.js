@@ -157,5 +157,25 @@ exports.chatFunction = functions.firestore
                   });
             }
           });
-      // return null;
+    });
+
+exports.deletionCreateFunction = functions.firestore
+    .document("delete/{docId}")
+    .onCreate((snapshot, context) => {
+      console.log("----------------start function--------------------");
+      const doc = snapshot.data();
+      console.log(doc);
+      const payload = {
+        notification: {
+          title: "User Account Deletion Has Been Requested!",
+          body: snapshot.data().requesterName,
+          clickAction: "FLUTTER_NOTIFICATION_CLICK",
+        },
+      };
+      return admin.messaging().sendToTopic("delete", payload)
+          .then((response) => {
+            console.log("Successfully sent message:", response);
+          }).catch((error) => {
+            console.log("Error sending message:", error);
+          });
     });

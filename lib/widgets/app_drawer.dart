@@ -2,15 +2,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../screens/orders_screen.dart';
 import 'package:shopping/screens/history_screen.dart';
+import 'package:shopping/screens/setting/setting_screen.dart';
 import '../screens/user_products_screen.dart';
 import '../providers/auth.dart';
 import 'package:provider/provider.dart';
 import '../screens/products_overview_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shopping/screens/setting/account_deletion_request_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   String username;
-  AppDrawer(this.username);
+  String userStatus;
+  AppDrawer(
+    this.username,
+    this.userStatus,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +67,29 @@ class AppDrawer extends StatelessWidget {
               Navigator.of(context).pushNamed(UserProductsScreen.routeName);
             },
           ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.settings),
+            title: Text('Setting'),
+            onTap: () {
+              Navigator.of(context).pop();
+
+              Navigator.of(context).pushNamed(SettingScreen.routeName);
+            },
+          ),
+
+          userStatus == 'admin' ? Divider() : SizedBox.shrink(),
+          userStatus == 'admin'
+              ? ListTile(
+                  leading: Icon(Icons.admin_panel_settings_sharp),
+                  title: Text('Account Deletion Requests'),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context)
+                        .pushNamed(AccountDeletionRequestScreen.routeName);
+                  },
+                )
+              : SizedBox.shrink(),
           Divider(),
           ListTile(
             leading: Icon(Icons.exit_to_app),

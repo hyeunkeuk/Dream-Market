@@ -54,9 +54,13 @@ class _NewAuthScreenState extends State<NewAuthScreen> {
         try {
           authResult = await _auth
               .signInWithEmailAndPassword(email: email, password: password)
-              .then((value) => Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                      builder: (context) => ProductOverviewScreen())));
+              .then((value) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => ProductOverviewScreen(),
+              ),
+            );
+          });
         } catch (error) {
           String errorMessage = error.message.toString();
           if (errorMessage.contains('password is invalid')) {
@@ -97,6 +101,7 @@ class _NewAuthScreenState extends State<NewAuthScreen> {
             .collection('users')
             .doc(authResult.user.uid)
             .set({
+          'chattingWith': '',
           'email': email,
           'firstName': firstName,
           'lastName': lastName,
