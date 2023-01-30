@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../screens/products_overview_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shopping/screens/setting/account_deletion_request_screen.dart';
+import 'package:shopping/screens/qt/qt_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   String username;
@@ -33,13 +34,15 @@ class AppDrawer extends StatelessWidget {
             automaticallyImplyLeading: false,
           ),
           Divider(),
-          // ListTile(
-          //     leading: Icon(Icons.house),
-          //     title: Text('Dream'),
-          //     onTap: () {
-          //       Navigator.of(context).pushReplacementNamed('/');
-          //     }),
-          // Divider(),
+          ListTile(
+            leading: Icon(Icons.menu_book_rounded),
+            title: Text('QT'),
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushNamed(QTScreen.routeName);
+            },
+          ),
+          Divider(),
           ListTile(
             leading: Icon(Icons.payment),
             title: Text('Orders'),
@@ -48,15 +51,6 @@ class AppDrawer extends StatelessWidget {
               Navigator.of(context).pushNamed(OrderScreen.routeName);
             },
           ),
-          // Divider(),
-          // ListTile(
-          //   leading: Icon(Icons.history),
-          //   title: Text('History'),
-          //   onTap: () {
-          //     Navigator.of(context).pop();
-          //     Navigator.of(context).pushNamed(HistoryScreen.routeName);
-          //   },
-          // ),
           Divider(),
           ListTile(
             leading: Icon(Icons.edit),
@@ -77,7 +71,6 @@ class AppDrawer extends StatelessWidget {
               Navigator.of(context).pushNamed(SettingScreen.routeName);
             },
           ),
-
           userStatus == 'admin' ? Divider() : SizedBox.shrink(),
           userStatus == 'admin'
               ? ListTile(

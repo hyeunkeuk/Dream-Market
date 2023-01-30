@@ -44,7 +44,7 @@ class _MessagesState extends State<Messages> {
 
   @override
   Widget build(BuildContext context) {
-    print('chatRoomId: ${widget.chatRoomId}');
+    // print('chatRoomId: ${widget.chatRoomId}');
     return _isLoading
         ? const Center(child: CircularProgressIndicator())
         : StreamBuilder<QuerySnapshot>(

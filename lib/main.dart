@@ -14,6 +14,7 @@ import 'package:shopping/screens/product_detail_screen.dart';
 import 'package:shopping/screens/setting/setting_screen.dart';
 import 'package:shopping/screens/setting/delete_account_screen.dart';
 import 'package:shopping/screens/setting/account_deletion_request_screen.dart';
+import 'package:shopping/screens/qt/qt_screen.dart';
 import '../screens/products_overview_screen.dart';
 import './providers/products.dart';
 import './providers/cart.dart';
@@ -150,6 +151,7 @@ class MyApp extends StatelessWidget {
           AccountDeletedScreen.routeName: (ctx) => AccountDeletedScreen(),
           AccountDeletionRequestScreen.routeName: (ctx) =>
               AccountDeletionRequestScreen(),
+          QTScreen.routeName: (context) => QTScreen(),
         },
       ),
     );
