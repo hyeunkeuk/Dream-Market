@@ -19,25 +19,28 @@ class _QTsState extends State<QTs> {
   Widget build(BuildContext context) {
     return _isLoading
         ? const Center(child: CircularProgressIndicator())
-        : StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('qt')
-                .doc(widget.qtId)
-                .collection('qts')
-                .orderBy('createdAt', descending: false)
-                .snapshots(),
-            builder: (ctx, qtsSnapshot) {
-              if (qtsSnapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              } else if (qtsSnapshot.connectionState ==
-                  ConnectionState.active) {
-                var qtDocs = qtsSnapshot.data.docs;
-                if (qtDocs.isNotEmpty) {
-                  return SingleChildScrollView(
-                    child: ListView.builder(
+        : ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: 500,
+            ),
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('qt')
+                  .doc(widget.qtId)
+                  .collection('qts')
+                  .orderBy('createdAt', descending: true)
+                  .snapshots(),
+              builder: (ctx, qtsSnapshot) {
+                if (qtsSnapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (qtsSnapshot.connectionState ==
+                    ConnectionState.active) {
+                  var qtDocs = qtsSnapshot.data.docs;
+                  if (qtDocs.isNotEmpty) {
+                    return ListView.builder(
                       scrollDirection: Axis.vertical,
                       shrinkWrap: true,
-                      reverse: true,
+                      // reverse: true,
                       itemCount: qtDocs.length,
                       itemBuilder: (ctx, index) {
                         // print(qtDocs[index]['creatorName']);
@@ -56,17 +59,17 @@ class _QTsState extends State<QTs> {
                           ],
                         );
                       },
-                    ),
-                  );
+                    );
+                  } else {
+                    return Container();
+                  }
                 } else {
+                  // print(qtsSnapshot.connectionState);
+
                   return Container();
                 }
-              } else {
-                // print(qtsSnapshot.connectionState);
-
-                return Container();
-              }
-            },
+              },
+            ),
           );
   }
 }
