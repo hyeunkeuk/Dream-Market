@@ -211,7 +211,11 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
                                 }
                                 final productDocs = productSnapshot.data.docs;
                                 if (productDocs.length > 0) {
-                                  return SingleChildScrollView(
+                                  return ConstrainedBox(
+                                    constraints: new BoxConstraints(
+                                      minHeight: 50.0,
+                                      maxHeight: 500.0,
+                                    ),
                                     child: ListView.builder(
                                       shrinkWrap: true,
                                       itemCount: productDocs.length,
