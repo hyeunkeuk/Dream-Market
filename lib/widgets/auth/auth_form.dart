@@ -130,7 +130,7 @@ class _AuthFormState extends State<AuthForm> {
                   children: <Widget>[
                     // if (!_isLogin) UserImagePicker(_pickedImage),
                     TextFormField(
-                      // initialValue: 'khk208@hotmail.com',
+                      initialValue: 'khk208@hotmail.com',
                       key: ValueKey('email'),
                       validator: (value) {
                         if (value.isEmpty || !value.contains('@')) {
@@ -193,7 +193,7 @@ class _AuthFormState extends State<AuthForm> {
                     //     },
                     //   ),
                     TextFormField(
-                      // initialValue: '890890890',
+                      initialValue: '890890890',
                       key: ValueKey('password'),
                       validator: (value) {
                         if (value.isEmpty || value.length < 7) {

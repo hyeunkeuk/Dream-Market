@@ -32,6 +32,7 @@ enum FilterOptions {
 enum Categories {
   All,
   Baby,
+  Beauty,
   Clothes,
   Electronics,
   Foods,
@@ -226,6 +227,10 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
                 ),
                 PopupMenuItem(
                   child: Text('Baby & Kids'),
+                  value: Categories.Baby,
+                ),
+                PopupMenuItem(
+                  child: Text('Beauty'),
                   value: Categories.Baby,
                 ),
                 PopupMenuItem(

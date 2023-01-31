@@ -64,6 +64,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   //Dropdown button parameters
   var categoryItems = [
     'Baby',
+    'Beauty',
     'Clothes',
     'Electronics',
     'Foods',
