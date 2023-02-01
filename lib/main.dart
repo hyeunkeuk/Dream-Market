@@ -96,43 +96,43 @@ class MyApp extends StatelessWidget {
           // primaryTextTheme: Typography().black,
         ),
 
-        // home: NewAuthScreen(),
-        home: StreamBuilder(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (ctx, userSnapshot) {
-            return NewAuthScreen();
+        home: NewAuthScreen(),
+        // home: StreamBuilder(
+        //   stream: FirebaseAuth.instance.authStateChanges(),
+        //   builder: (ctx, userSnapshot) {
+        //     return NewAuthScreen();
 
-            // if (userSnapshot.connectionState == ConnectionState.waiting) {
-            //   return const Center(child: CircularProgressIndicator());
-            // }
+        //     // if (userSnapshot.connectionState == ConnectionState.waiting) {
+        //     //   return const Center(child: CircularProgressIndicator());
+        //     // }
 
-            ////////////////////////////////////////////////////////////////////////////////////
-            /*
-            This is the main problem
-            */
-            // if (userSnapshot.hasData) {
-            //   print('hasdata');
-            //   return ProductOverviewScreen();
-            // } else {
-            //   return NewAuthScreen();
-            // }
-            ////////////////////////////////////////////////////////////////////////////////////
+        //     ////////////////////////////////////////////////////////////////////////////////////
+        //     /*
+        //     This is the main problem
+        //     */
+        //     // if (userSnapshot.hasData) {
+        //     //   print('hasdata');
+        //     //   return ProductOverviewScreen();
+        //     // } else {
+        //     //   return NewAuthScreen();
+        //     // }
+        //     ////////////////////////////////////////////////////////////////////////////////////
 
-            // if (userSnapshot.hasData && userSnapshot.data.emailVerified) {
-            //   return ProductOverviewScreen();
-            // } else if (userSnapshot.hasData &&
-            //     !userSnapshot.data.emailVerified) {
-            //   return VerifyScreen();
-            // }
+        //     // if (userSnapshot.hasData && userSnapshot.data.emailVerified) {
+        //     //   return ProductOverviewScreen();
+        //     // } else if (userSnapshot.hasData &&
+        //     //     !userSnapshot.data.emailVerified) {
+        //     //   return VerifyScreen();
+        //     // }
 
-            // if (!userSnapshot.hasData) {
-            //   print('has no data');
-            //   return NewAuthScreen();
-            // }
+        //     // if (!userSnapshot.hasData) {
+        //     //   print('has no data');
+        //     //   return NewAuthScreen();
+        //     // }
 
-            // return const Center(child: CircularProgressIndicator());
-          },
-        ),
+        //     // return const Center(child: CircularProgressIndicator());
+        //   },
+        // ),
         routes: {
           ProductOverviewScreen.routeName: (ctx) => ProductOverviewScreen(),
           ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),

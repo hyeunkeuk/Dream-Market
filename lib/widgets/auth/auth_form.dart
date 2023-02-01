@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import './pickers/user_image.dart';
 import 'dart:io';
 import '../../models/http_exception.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum AuthMode { Signup, Login }
 
@@ -36,6 +37,18 @@ class _AuthFormState extends State<AuthForm> {
 
   File _userImageFile;
 
+  bool _isChecked = false;
+
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _loadUserEmailPassword();
+    super.initState();
+  }
+
   void _pickedImage(File image) async {
     _userImageFile = image;
   }
@@ -64,6 +77,7 @@ class _AuthFormState extends State<AuthForm> {
           _isLogin,
           context,
         );
+        rememberUserCredential();
       } else {
         showDialog(
           context: context,
@@ -104,6 +118,52 @@ class _AuthFormState extends State<AuthForm> {
     }
   }
 
+  void rememberUserCredential() {
+    if (_isChecked) {
+      SharedPreferences.getInstance().then(
+        (prefs) {
+          prefs.setBool("remember_me", _isChecked);
+          prefs.setString('email', _emailController.text);
+          prefs.setString('password', _passwordController.text);
+        },
+      );
+    } else {
+      SharedPreferences.getInstance().then(
+        (prefs) {
+          prefs.setBool("remember_me", _isChecked);
+          prefs.setString('email', '');
+          prefs.setString('password', '');
+        },
+      );
+    }
+  }
+
+  void _handleRemeberme(bool value) {
+    setState(() {
+      _isChecked = value;
+    });
+  }
+
+  void _loadUserEmailPassword() async {
+    // print("Load Email");
+    try {
+      SharedPreferences _prefs = await SharedPreferences.getInstance();
+      var _email = _prefs.getString("email") ?? "";
+      var _password = _prefs.getString("password") ?? "";
+      var _remeberMe = _prefs.getBool("remember_me") ?? false;
+
+      if (_remeberMe) {
+        setState(() {
+          _isChecked = true;
+        });
+        _emailController.text = _email ?? "";
+        _passwordController.text = _password ?? "";
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
@@ -130,7 +190,9 @@ class _AuthFormState extends State<AuthForm> {
                   children: <Widget>[
                     // if (!_isLogin) UserImagePicker(_pickedImage),
                     TextFormField(
-                      initialValue: 'khk208@hotmail.com',
+                      controller: _emailController,
+                      // initialValue: 'khk208@hotmail.com',
+                      // initialValue: _userEmail,
                       key: ValueKey('email'),
                       validator: (value) {
                         if (value.isEmpty || !value.contains('@')) {
@@ -193,7 +255,9 @@ class _AuthFormState extends State<AuthForm> {
                     //     },
                     //   ),
                     TextFormField(
-                      initialValue: '890890890',
+                      // initialValue: '890890890',
+                      controller: _passwordController,
+                      // initialValue: _userPassword,
                       key: ValueKey('password'),
                       validator: (value) {
                         if (value.isEmpty || value.length < 7) {
@@ -225,6 +289,30 @@ class _AuthFormState extends State<AuthForm> {
                         },
                       ),
                     SizedBox(height: 12),
+                    if (_isLogin)
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                                height: 24.0,
+                                width: 24.0,
+                                child: Theme(
+                                  data: ThemeData(
+                                      unselectedWidgetColor:
+                                          Color(0xff00C8E8) // Your color
+                                      ),
+                                  child: Checkbox(
+                                      activeColor: Color(0xff00C8E8),
+                                      value: _isChecked,
+                                      onChanged: _handleRemeberme),
+                                )),
+                            SizedBox(width: 10.0),
+                            Text("Remember Me",
+                                style: TextStyle(
+                                    color: Color(0xff646464),
+                                    fontSize: 12,
+                                    fontFamily: 'Rubic'))
+                          ]),
                     if (widget.isLoading) CircularProgressIndicator(),
                     if (!widget.isLoading)
                       ElevatedButton(
