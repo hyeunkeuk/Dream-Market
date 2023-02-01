@@ -78,16 +78,16 @@ class _OrderScreenState extends State<OrderScreen> {
                           ),
                         ),
                         StreamBuilder(
-                          stream: userStatus == 'admin'
+                          stream: userStatus == 'dreamer'
                               ? FirebaseFirestore.instance
                                   .collection('orders')
                                   .where('status', isEqualTo: 'pending')
+                                  .where('creatorId', isEqualTo: user.uid)
                                   .orderBy('dateModified', descending: true)
                                   .snapshots()
                               : FirebaseFirestore.instance
                                   .collection('orders')
                                   .where('status', isEqualTo: 'pending')
-                                  .where('creatorId', isEqualTo: user.uid)
                                   .orderBy('dateModified', descending: true)
                                   .snapshots(),
                           builder: (ctx, orderSnapshot) {
@@ -167,16 +167,16 @@ class _OrderScreenState extends State<OrderScreen> {
                           },
                         ),
                         StreamBuilder(
-                          stream: userStatus == 'admin'
+                          stream: userStatus == 'dreamer'
                               ? FirebaseFirestore.instance
                                   .collection('orders')
                                   .where('status', isEqualTo: 'accepted')
+                                  .where('creatorId', isEqualTo: user.uid)
                                   .orderBy('dateModified', descending: true)
                                   .snapshots()
                               : FirebaseFirestore.instance
                                   .collection('orders')
                                   .where('status', isEqualTo: 'accepted')
-                                  .where('creatorId', isEqualTo: user.uid)
                                   .orderBy('dateModified', descending: true)
                                   .snapshots(),
                           builder: (ctx, orderSnapshot) {

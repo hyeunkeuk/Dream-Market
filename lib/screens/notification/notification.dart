@@ -37,11 +37,13 @@ Future<void> initializeFBM(userStatus) async {
 
   if (userStatus == "admin") {
     fbm.subscribeToTopic('orders');
-    // fbm.subscribeToTopic('products');
     fbm.subscribeToTopic('delete');
-  } else {
+  }
+  if (userStatus == "treasurer") {
+    fbm.subscribeToTopic('orders');
+  }
+  if (userStatus == "dreamer") {
     fbm.unsubscribeFromTopic('orders');
-    // fbm.unsubscribeFromTopic('products');
     fbm.unsubscribeFromTopic('delete');
   }
 

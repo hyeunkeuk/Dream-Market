@@ -154,24 +154,14 @@ class _OrderItemState extends State<OrderItem> {
                             'Accepted',
                           ),
                   ),
-                  title: widget.userStatus == 'admin'
-                      ? Text(
-                          '${widget.creatorName} (${widget.creatorEmail})\n${widget.title}\nAmount: \$${widget.amount}')
-                      : Text('${widget.title}\nAmount: \$${widget.amount}'),
+                  title: widget.userStatus == 'dreamer'
+                      ? Text('${widget.title}\nAmount: \$${widget.amount}')
+                      : Text(
+                          '${widget.creatorName} (${widget.creatorEmail})\n${widget.title}\nAmount: \$${widget.amount}'),
                   subtitle: Text(
                       "${widget.dateModified.substring(0, 10)} ${widget.dateModified.substring(24)}"),
-                  trailing: widget.userStatus == 'admin'
+                  trailing: widget.userStatus == 'dreamer'
                       ? IconButton(
-                          icon: Icon(_expanded
-                              ? Icons.expand_less
-                              : Icons.expand_more),
-                          onPressed: () {
-                            setState(() {
-                              _expanded = !_expanded;
-                            });
-                          },
-                        )
-                      : IconButton(
                           icon: Icon(Icons.delete),
                           onPressed: widget.status == 'pending'
                               ? () {
@@ -219,6 +209,16 @@ class _OrderItemState extends State<OrderItem> {
                                   );
                                 }
                               : null,
+                        )
+                      : IconButton(
+                          icon: Icon(_expanded
+                              ? Icons.expand_less
+                              : Icons.expand_more),
+                          onPressed: () {
+                            setState(() {
+                              _expanded = !_expanded;
+                            });
+                          },
                         ),
                 ),
                 if (_expanded)
