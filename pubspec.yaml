@@ -37,7 +37,7 @@ dependencies:
   image_picker: ^0.8.6
   path_provider: ^2.0.5
   path: ^1.8.0
-  shared_preferences: ^2.0.8
+  shared_preferences: ^2.0.17 #Jan.31/2023
   # firebase_storage: ^10.0.3
   firebase_storage: ^11.0.9 #Dec.22th/2022
   # firebase_core: ^1.7.0

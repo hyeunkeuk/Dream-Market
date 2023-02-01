@@ -154,8 +154,13 @@ class _QTScreenState extends State<QTScreen> {
                           padding: const EdgeInsets.all(20.0),
                           child: Text(
                             engKor == 'English'
-                                ? todayQT['korPassage']
-                                : todayQT['engPassage'],
+                                ? todayQT['kor']
+                                : todayQT['eng'],
+                            style: TextStyle(
+                              fontSize: 17,
+                              letterSpacing: 1,
+                              // wordSpacing: 20,
+                            ),
                           ),
                         ),
                       ),
