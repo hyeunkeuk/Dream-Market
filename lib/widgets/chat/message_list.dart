@@ -115,7 +115,13 @@ class _MessageListState extends State<MessageList> {
                       //           : null
                       //       : null,
                       // ),
-                      trailing: Text(widget.lastMessageAt.substring(11, 16)),
+                      trailing: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(widget.lastMessageAt.substring(5, 10)),
+                          Text(widget.lastMessageAt.substring(11, 16)),
+                        ],
+                      ),
                       onTap: () => Navigator.of(context).pushNamed(
                           ChatScreen.routeName,
                           arguments: [widget.senderId, widget.chatRoomId])),
