@@ -56,6 +56,27 @@ class _OrderScreenState extends State<OrderScreen> {
                   SingleChildScrollView(
                     child: Column(
                       children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.indigo.shade100,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(color: Colors.black12, blurRadius: 50)
+                              ],
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Please send your fund to vdcfund@gmail.com.\nPlease note your name and the product name in the fund.\nYour order will be completed once your fund is accepted.',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                         StreamBuilder(
                           stream: userStatus == 'admin'
                               ? FirebaseFirestore.instance
