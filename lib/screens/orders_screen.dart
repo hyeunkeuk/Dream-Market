@@ -69,7 +69,7 @@ class _OrderScreenState extends State<OrderScreen> {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                'Please send your fund to vdcfund@gmail.com.\nPlease note your name and the product name in the fund.\nYour order will be completed once your fund is accepted.',
+                                'Please send your fund to vdcfund@gmail.com.\nPlease note your name and the product name in the fund.\n\nYour order status will be changed to \'Accepted\' once your fund is confirmed. \n\nPlease click \'Received\' button after you receive the product from the owner to complete your order.',
                                 style: TextStyle(
                                   fontSize: 15,
                                 ),

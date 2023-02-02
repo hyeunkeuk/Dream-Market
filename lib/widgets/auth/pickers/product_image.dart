@@ -80,6 +80,7 @@ class _ProductImagePickerState extends State<ProductImagePicker> {
     final imageFile = await picker.pickImage(
       source: ImageSource.camera,
       maxWidth: 600,
+      imageQuality: 50,
     );
 
     if (mounted) {
