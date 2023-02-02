@@ -178,12 +178,20 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                                       'yyyy-MM-dd HH:mm:ss.SSS')
                                                   .add_jm()
                                                   .format(timestamp);
+                                              await FirebaseFirestore.instance
+                                                  .collection('products')
+                                                  .doc(productId)
+                                                  .update({
+                                                'status': 'Pending',
+                                                'soldTo': user.uid,
+                                              });
                                               if (type == 'market') {
                                                 await FirebaseFirestore.instance
                                                     .collection('products')
                                                     .doc(productId)
                                                     .update({
                                                   'status': 'Pending',
+                                                  'soldTo': user.uid,
                                                 });
                                               }
 

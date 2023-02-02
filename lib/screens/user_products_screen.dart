@@ -146,26 +146,35 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
                                           child: ListView.builder(
                                             shrinkWrap: true,
                                             itemCount: productDocs.length,
-                                            itemBuilder: (_, i) => Column(
-                                              children: [
-                                                UserProductItem(
-                                                  true,
-                                                  productDocs[i].id,
-                                                  productDocs[i]['category'],
-                                                  productDocs[i]['createdAt'],
-                                                  productDocs[i]['creatorId'],
-                                                  productDocs[i]['description'],
-                                                  productDocs[i]['imageUrl'],
-                                                  productDocs[i]['location'],
-                                                  productDocs[i]['price'],
-                                                  productDocs[i]['status'],
-                                                  productDocs[i]['title'],
-                                                  productDocs[i]['type'],
-                                                  productDocs[i]['soldTo'],
-                                                ),
-                                                Divider(),
-                                              ],
-                                            ),
+                                            itemBuilder: (_, i) {
+                                              return Column(
+                                                children: [
+                                                  UserProductItem(
+                                                    true,
+                                                    productDocs[i].id,
+                                                    productDocs[i]['category'],
+                                                    productDocs[i]['createdAt'],
+                                                    productDocs[i]['creatorId'],
+                                                    productDocs[i]
+                                                        ['description'],
+                                                    productDocs[i]['imageUrl'],
+                                                    productDocs[i]['location'],
+                                                    productDocs[i]['price'],
+                                                    productDocs[i]['status'],
+                                                    productDocs[i]['title'],
+                                                    productDocs[i]['type'],
+                                                    productDocs[i]
+                                                            .data()
+                                                            .containsKey(
+                                                                'soldTo')
+                                                        ? productDocs[i]
+                                                            ['soldTo']
+                                                        : '',
+                                                  ),
+                                                  Divider(),
+                                                ],
+                                              );
+                                            },
                                           ),
                                         );
                                       } else {
@@ -235,7 +244,11 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
                                             productDocs[i]['status'],
                                             productDocs[i]['title'],
                                             productDocs[i]['type'],
-                                            productDocs[i]['soldTo'],
+                                            productDocs[i]
+                                                    .data()
+                                                    .containsKey('soldTo')
+                                                ? productDocs[i]['soldTo']
+                                                : '',
                                           ),
                                           Divider(),
                                         ],

@@ -138,6 +138,7 @@ class _OrderItemState extends State<OrderItem> {
         FirebaseFirestore.instance.collection('products');
     await productList.doc(widget.productId).update({
       'status': 'Available',
+      'soldTo': '',
     });
   }
 
