@@ -9,6 +9,7 @@ import 'package:shopping/screens/auth/verify_screen.dart';
 import 'package:shopping/screens/chat/chat_screen.dart';
 import 'package:shopping/screens/chat/search_user_screen.dart';
 import 'package:shopping/screens/history_screen.dart';
+import 'package:shopping/screens/password_reset_screen.dart';
 // import 'package:shopping/screens/chat/chat_screen.dart';
 import 'package:shopping/screens/product_detail_screen.dart';
 import 'package:shopping/screens/setting/setting_screen.dart';
@@ -152,6 +153,7 @@ class MyApp extends StatelessWidget {
           AccountDeletionRequestScreen.routeName: (ctx) =>
               AccountDeletionRequestScreen(),
           QTScreen.routeName: (context) => QTScreen(),
+          PasswordResetScreen.routename: (ctx) => PasswordResetScreen(),
         },
       ),
     );

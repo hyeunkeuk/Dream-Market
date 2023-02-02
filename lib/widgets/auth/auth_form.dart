@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shopping/screens/password_reset_screen.dart';
 import './pickers/user_image.dart';
 import 'dart:io';
 import '../../models/http_exception.dart';
@@ -313,6 +314,8 @@ class _AuthFormState extends State<AuthForm> {
                                     fontSize: 12,
                                     fontFamily: 'Rubic'))
                           ]),
+
+                    SizedBox(height: 12),
                     if (widget.isLoading) CircularProgressIndicator(),
                     if (!widget.isLoading)
                       ElevatedButton(
@@ -347,6 +350,24 @@ class _AuthFormState extends State<AuthForm> {
                               _isLogin = !_isLogin;
                             });
                           }
+                        },
+                      ),
+                    if (_isLogin)
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          disabledBackgroundColor: Colors.white,
+                          disabledForegroundColor: Colors.white,
+                        ),
+                        child: Text(
+                          'Forgot password?',
+                          style: TextStyle(color: Colors.lightBlue),
+                          textAlign: TextAlign.left,
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed(
+                            PasswordResetScreen.routename,
+                          );
                         },
                       ),
                   ],
