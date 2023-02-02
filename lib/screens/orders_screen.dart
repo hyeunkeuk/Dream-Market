@@ -81,13 +81,13 @@ class _OrderScreenState extends State<OrderScreen> {
                           stream: userStatus == 'dreamer'
                               ? FirebaseFirestore.instance
                                   .collection('orders')
-                                  .where('status', isEqualTo: 'pending')
+                                  .where('status', isEqualTo: 'Pending')
                                   .where('creatorId', isEqualTo: user.uid)
                                   .orderBy('dateModified', descending: true)
                                   .snapshots()
                               : FirebaseFirestore.instance
                                   .collection('orders')
-                                  .where('status', isEqualTo: 'pending')
+                                  .where('status', isEqualTo: 'Pending')
                                   .orderBy('dateModified', descending: true)
                                   .snapshots(),
                           builder: (ctx, orderSnapshot) {
@@ -176,7 +176,8 @@ class _OrderScreenState extends State<OrderScreen> {
                                   .snapshots()
                               : FirebaseFirestore.instance
                                   .collection('orders')
-                                  .where('status', isEqualTo: 'accepted')
+                                  .where('status',
+                                      whereIn: ['accepted', 'Completed'])
                                   .orderBy('dateModified', descending: true)
                                   .snapshots(),
                           builder: (ctx, orderSnapshot) {

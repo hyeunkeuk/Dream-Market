@@ -60,7 +60,7 @@ class Orders with ChangeNotifier {
                   'price': cp.price,
                 })
             .toList(),
-        'status': 'pending'
+        'status': 'Pending'
       },
     );
 

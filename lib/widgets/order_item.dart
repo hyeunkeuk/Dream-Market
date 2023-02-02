@@ -81,12 +81,28 @@ class _OrderItemState extends State<OrderItem> {
   }
 
   Future<void> updateOrderStatus() async {
-    newOrderStatus = widget.status == 'pending' ? 'accepted' : 'pending';
-    // String previousOrderStatus = widget.status;
-    // String newStatus = 'pending';
-    // if (previousOrderStatus == 'pending') {
-    //   newStatus = 'accepted';
-    // }
+    newOrderStatus = widget.status == 'Pending' ? 'accepted' : 'Pending';
+
+    CollectionReference orderList =
+        FirebaseFirestore.instance.collection('orders');
+
+    final timestamp = DateTime.now();
+    final modifiedTimeStamp =
+        DateFormat("yyyy-MM-dd HH:mm:ss.SSS").add_jm().format(timestamp);
+    await orderList.doc(widget.orderId).update({
+      'status': newOrderStatus,
+      'dateModified': modifiedTimeStamp,
+    });
+    CollectionReference productList =
+        FirebaseFirestore.instance.collection('products');
+    await productList.doc(widget.productId).update({
+      'soldTo': widget.creatorId,
+    });
+  }
+
+  Future<void> completeOrderStatus() async {
+    newOrderStatus = 'Completed';
+
     CollectionReference orderList =
         FirebaseFirestore.instance.collection('orders');
 
@@ -103,17 +119,11 @@ class _OrderItemState extends State<OrderItem> {
     // print('newOrderStatus = ${newOrderStatus}');
 
     String newProductStatus =
-        newOrderStatus == 'pending' ? 'Available' : 'Sold';
-    // print('newProductStatus = ${newProductStatus}');
+        newOrderStatus == 'Pending' ? 'Available' : 'Sold';
 
-    // String currentStatus = widget.status;
-    // String newStatus = 'Available';
-    // if (currentStatus == 'pending') {
-    //   newStatus = 'Sold';
-    // }
     CollectionReference productList =
         FirebaseFirestore.instance.collection('products');
-    print('widget.productId: ${widget.productId}');
+    // print('widget.productId: ${widget.productId}');
     // Need a Workaround for updating product availability for dream products and normal products
     await productList.doc(widget.productId).update({
       'status': newProductStatus,
@@ -124,6 +134,11 @@ class _OrderItemState extends State<OrderItem> {
     CollectionReference orderList =
         FirebaseFirestore.instance.collection('orders');
     await orderList.doc(widget.orderId).delete();
+    CollectionReference productList =
+        FirebaseFirestore.instance.collection('products');
+    await productList.doc(widget.productId).update({
+      'status': 'Available',
+    });
   }
 
   var _expanded = false;
@@ -141,19 +156,31 @@ class _OrderItemState extends State<OrderItem> {
             child: Column(
               children: <Widget>[
                 ListTile(
-                  leading: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                    color: widget.status == 'pending'
-                        ? Colors.yellow
-                        : Colors.green,
-                    child: widget.status == 'pending'
-                        ? Text(
-                            'Pending...',
-                          )
-                        : Text(
-                            'Accepted',
+                  leading: widget.status == 'accepted'
+                      ? ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.lightGreen,
                           ),
-                  ),
+                          onPressed: () {
+                            setState(() {
+                              fetchProductData().then((value) {
+                                completeOrderStatus().then((value) {});
+                                widget.orderScreenSetstate();
+                              });
+                            });
+                          },
+                          child: Text(
+                            'Received',
+                          ),
+                        )
+                      : Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 10),
+                          color: widget.status == 'Completed'
+                              ? Colors.green
+                              : Colors.yellow,
+                          child: Text(widget.status),
+                        ),
                   title: widget.userStatus == 'dreamer'
                       ? Text('${widget.title}\nAmount: \$${widget.amount}')
                       : Text(
@@ -163,7 +190,7 @@ class _OrderItemState extends State<OrderItem> {
                   trailing: widget.userStatus == 'dreamer'
                       ? IconButton(
                           icon: Icon(Icons.delete),
-                          onPressed: widget.status == 'pending'
+                          onPressed: widget.status == 'Pending'
                               ? () {
                                   showDialog(
                                     context: context,
@@ -228,7 +255,7 @@ class _OrderItemState extends State<OrderItem> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 0),
                         child: ElevatedButton(
-                          style: widget.status == 'pending'
+                          style: widget.status == 'Pending'
                               ? ElevatedButton.styleFrom(
                                   primary: Colors.green,
                                 )
@@ -241,10 +268,10 @@ class _OrderItemState extends State<OrderItem> {
                             setState(() {
                               fetchProductData().then((value) {
                                 updateOrderStatus().then((value) {
-                                  print(
-                                      'productData[title]:${productData['title']}');
-                                  print(
-                                      'productData[type]:${productData['type']}');
+                                  // print(
+                                  //     'productData[title]:${productData['title']}');
+                                  // print(
+                                  //     'productData[type]:${productData['type']}');
                                   if (productData['type'] == 'market') {
                                     updateProductAvailability();
                                   }
@@ -255,7 +282,7 @@ class _OrderItemState extends State<OrderItem> {
                               });
                             });
                           },
-                          child: widget.status == 'pending'
+                          child: widget.status == 'Pending'
                               ? Text(
                                   'Confirm',
                                 )
@@ -266,7 +293,7 @@ class _OrderItemState extends State<OrderItem> {
                       ),
                       IconButton(
                         icon: Icon(Icons.delete),
-                        onPressed: widget.status == 'pending'
+                        onPressed: widget.status == 'Pending'
                             ? () {
                                 showDialog(
                                   context: context,

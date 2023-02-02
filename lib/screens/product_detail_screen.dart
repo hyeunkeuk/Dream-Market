@@ -28,6 +28,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   var productId;
   var showDream;
   var creatorId;
+  var type;
   final user = FirebaseAuth.instance.currentUser;
 
   final CollectionReference usersList =
@@ -56,6 +57,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       productId = productData[0].toString();
       showDream = productData[1];
       creatorId = productData[2];
+      type = productData[3];
       // getAllProducts();
       getUserData().then((value) {
         setState(() {
@@ -143,112 +145,139 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         ),
                       ),
                       productDocs['creatorId'] != user.uid
-                          ? IconButton(
-                              icon: const Icon(
-                                Icons.shopping_cart,
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 25,
-                              ),
-                              color: Theme.of(context).accentColor,
-                              onPressed: () async {
-                                showDialog(
-                                  context: context,
-                                  builder: (ctx) => AlertDialog(
-                                    title: Text(
-                                      'Order Confirmation',
-                                    ),
-                                    content: Text(
-                                      'Do you want to order the following item(s)?',
-                                    ),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        child: Text(
-                                          'Confirm',
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        onPressed: () async {
-                                          final timestamp = DateTime.now();
-                                          final orderTimeStamp = DateFormat(
-                                                  'yyyy-MM-dd HH:mm:ss.SSS')
-                                              .add_jm()
-                                              .format(timestamp);
-                                          await FirebaseFirestore.instance
-                                              .collection('users')
-                                              .doc(user.uid)
-                                              .get()
-                                              .then((userData) async {
-                                            await FirebaseFirestore.instance
-                                                .collection('orders')
-                                                .add(
-                                              {
-                                                'creatorId': user.uid,
-                                                'creatorName':
-                                                    userData['firstName'],
-                                                'creatorEmail':
-                                                    userData['email'],
-                                                'dateModified': orderTimeStamp,
-                                                'amount': productDocs['price'],
-                                                'dateTime': orderTimeStamp,
-                                                'title': productDocs['title'],
-                                                'productId': productId,
-                                                'productOwnerId':
-                                                    productDocs['creatorId'],
-                                                'status': 'pending'
-                                              },
-                                            );
-                                          });
-
-                                          Navigator.of(ctx).pop(false);
-
-                                          showDialog(
-                                            context: context,
-                                            builder: (ctx) => AlertDialog(
-                                              title: Text('Order Instruction'),
-                                              content: Text(
-                                                'Please send e-Transfer \$${productDocs['price']} to vdcfund@gmail.com',
-                                              ),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.of(ctx)
-                                                        .pop(false);
-                                                    Navigator.of(context)
-                                                        .pushNamed(OrderScreen
-                                                            .routeName);
-                                                  },
-                                                  child: Text(
-                                                    'Okay',
-                                                    style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(ctx).pop(false);
-                                        },
-                                        child: Text(
-                                          'No',
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                    ],
+                          ? productDocs['status'] == 'Available'
+                              ? IconButton(
+                                  icon: const Icon(
+                                    Icons.shopping_cart,
                                   ),
-                                );
-                              },
-                            )
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 25,
+                                  ),
+                                  color: Theme.of(context).accentColor,
+                                  onPressed: () async {
+                                    showDialog(
+                                      context: context,
+                                      builder: (ctx) => AlertDialog(
+                                        title: Text(
+                                          'Order Confirmation',
+                                        ),
+                                        content: Text(
+                                          'Do you want to order the following item(s)?',
+                                        ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: Text(
+                                              'Confirm',
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            onPressed: () async {
+                                              final timestamp = DateTime.now();
+                                              final orderTimeStamp = DateFormat(
+                                                      'yyyy-MM-dd HH:mm:ss.SSS')
+                                                  .add_jm()
+                                                  .format(timestamp);
+                                              if (type == 'market') {
+                                                await FirebaseFirestore.instance
+                                                    .collection('products')
+                                                    .doc(productId)
+                                                    .update({
+                                                  'status': 'Pending',
+                                                });
+                                              }
+
+                                              await FirebaseFirestore.instance
+                                                  .collection('users')
+                                                  .doc(user.uid)
+                                                  .get()
+                                                  .then((userData) async {
+                                                await FirebaseFirestore.instance
+                                                    .collection('orders')
+                                                    .add(
+                                                  {
+                                                    'creatorId': user.uid,
+                                                    'creatorName':
+                                                        userData['firstName'],
+                                                    'creatorEmail':
+                                                        userData['email'],
+                                                    'dateModified':
+                                                        orderTimeStamp,
+                                                    'amount':
+                                                        productDocs['price'],
+                                                    'dateTime': orderTimeStamp,
+                                                    'title':
+                                                        productDocs['title'],
+                                                    'productId': productId,
+                                                    'productOwnerId':
+                                                        productDocs[
+                                                            'creatorId'],
+                                                    'status': 'Pending'
+                                                  },
+                                                );
+                                              });
+
+                                              Navigator.of(ctx).pop(false);
+
+                                              showDialog(
+                                                context: context,
+                                                builder: (ctx) => AlertDialog(
+                                                  title:
+                                                      Text('Order Instruction'),
+                                                  content: Text(
+                                                    'Please send e-Transfer \$${productDocs['price']} to vdcfund@gmail.com',
+                                                  ),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(ctx)
+                                                            .pop(false);
+                                                        Navigator.of(context)
+                                                            .pushNamed(
+                                                                OrderScreen
+                                                                    .routeName);
+                                                      },
+                                                      child: Text(
+                                                        'Okay',
+                                                        style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(ctx).pop(false);
+                                            },
+                                            child: Text(
+                                              'No',
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                )
+                              : Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                    decoration:
+                                        BoxDecoration(color: Colors.lightGreen),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text('Pending...'),
+                                    ),
+                                  ),
+                                )
                           : Container(
                               padding: EdgeInsets.symmetric(
                                 horizontal: 20,

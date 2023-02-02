@@ -135,6 +135,7 @@ class _ProductItemState extends State<ProductItem> {
                       widget.id,
                       widget.showDream,
                       widget.creatorId,
+                      widget.type,
                     ],
                   );
                 },
