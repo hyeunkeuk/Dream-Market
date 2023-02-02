@@ -102,6 +102,12 @@ class AppDrawer extends StatelessWidget {
                 // Provider.of<Auth>(context, listen: false).logout();
               },
             ),
+            Text(
+              'Version: 1.1.2',
+              style: TextStyle(
+                fontSize: 11,
+              ),
+            ),
           ],
         ),
       ),

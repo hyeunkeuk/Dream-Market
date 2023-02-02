@@ -224,6 +224,12 @@ class _NewAuthScreenState extends State<NewAuthScreen> {
                       _isLoading,
                     ),
                   ),
+                  Text(
+                    'Version: 1.1.2',
+                    style: TextStyle(
+                      fontSize: 11,
+                    ),
+                  ),
                 ],
               ),
             ),

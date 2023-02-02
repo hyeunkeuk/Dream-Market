@@ -68,10 +68,15 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   }
 
   Future<void> getUserData() async {
+    final timestamp = DateTime.now();
     userData = await FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid)
         .get();
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+      'version': '1.1.2',
+      'lastLogin': timestamp,
+    });
 
     // print(userData);
   }
