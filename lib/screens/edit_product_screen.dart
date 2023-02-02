@@ -55,6 +55,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     'category': '',
     'location': '',
     'status': 'Available',
+    'soldTo': '',
   };
 
   var _isInit = true;
@@ -356,7 +357,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   'createdAt': Timestamp.now(),
                   'location': _editedProduct.location,
                   'status': _editedProduct.status,
-                  'type': userStatus == 'admin' ? 'dream' : 'market'
+                  'type': userStatus == 'admin' ? 'dream' : 'market',
+                  'soldTo': '',
                 },
               );
 

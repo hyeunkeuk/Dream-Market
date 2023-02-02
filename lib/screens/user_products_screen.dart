@@ -197,12 +197,12 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
                                   ? FirebaseFirestore.instance
                                       .collection('products')
                                       .where('type', isEqualTo: 'market')
-                                      // .orderBy('status')
+                                      .orderBy('status')
                                       .snapshots()
                                   : FirebaseFirestore.instance
                                       .collection('products')
                                       .where('creatorId', isEqualTo: user.uid)
-                                      // .orderBy('status')
+                                      .orderBy('status')
                                       .snapshots(),
                               builder: (ctx, productSnapshot) {
                                 if (productSnapshot.connectionState ==

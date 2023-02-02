@@ -352,7 +352,7 @@ class _AuthFormState extends State<AuthForm> {
                           }
                         },
                       ),
-                    if (_isLogin)
+                    if (!widget.isLoading & _isLogin)
                       TextButton(
                         style: TextButton.styleFrom(
                           backgroundColor: Colors.white,

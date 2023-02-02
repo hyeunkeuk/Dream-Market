@@ -123,7 +123,8 @@ class _UserProductItemState extends State<UserProductItem> {
                 ),
                 buyerData != null
                     ? widget.status == 'Sold'
-                        ? Text('Sold To: ${buyerData['firstName']}')
+                        ? Text(
+                            'Sold To: ${buyerData['firstName']} ${buyerData['lastName']}')
                         : widget.status == 'Pending'
                             ? Text(
                                 'Requested by: ${buyerData['firstName']} ${buyerData['lastName']}')
