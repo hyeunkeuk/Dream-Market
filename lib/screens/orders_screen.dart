@@ -170,7 +170,8 @@ class _OrderScreenState extends State<OrderScreen> {
                           stream: userStatus == 'dreamer'
                               ? FirebaseFirestore.instance
                                   .collection('orders')
-                                  .where('status', isEqualTo: 'accepted')
+                                  .where('status',
+                                      whereIn: ['accepted', 'Completed'])
                                   .where('creatorId', isEqualTo: user.uid)
                                   .orderBy('dateModified', descending: true)
                                   .snapshots()
