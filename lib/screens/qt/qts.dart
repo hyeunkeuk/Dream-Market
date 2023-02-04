@@ -44,17 +44,23 @@ class _QTsState extends State<QTs> {
                       itemCount: qtDocs.length,
                       itemBuilder: (ctx, index) {
                         // print(qtDocs[index]['creatorName']);
+
                         var initial =
                             qtDocs[index]['creatorName'].substring(0, 1);
                         var title = qtDocs[index]['title'];
                         var content = qtDocs[index]['content'];
+                        var creatorId = qtDocs[index]['creatorId'];
+                        var tileId = qtDocs[index].id;
                         return Column(
                           children: [
                             Divider(),
                             QTtile(
+                              widget.qtId,
+                              tileId,
                               initial,
                               title,
                               content,
+                              creatorId,
                             ),
                           ],
                         );
