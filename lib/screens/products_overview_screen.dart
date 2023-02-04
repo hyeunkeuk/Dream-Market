@@ -74,7 +74,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         .doc(user.uid)
         .get();
     await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
-      'version': '1.1.2',
+      'version': '1.1.3',
       'lastLogin': timestamp,
     });
 

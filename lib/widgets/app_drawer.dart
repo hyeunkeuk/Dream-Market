@@ -103,7 +103,7 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             Text(
-              'Version: 1.1.2',
+              'Version: 1.1.3',
               style: TextStyle(
                 fontSize: 11,
               ),
