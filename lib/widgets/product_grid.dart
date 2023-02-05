@@ -51,7 +51,8 @@ class _ProductsGridState extends State<ProductsGrid> {
           final productDocs = productSnapshot.data.docs;
           selectedProduct = [];
           for (int idx = 0; idx < productDocs.length; idx++) {
-            if (productDocs[idx]['status'] == 'Available') {
+            if (productDocs[idx]['status'] == 'Available' ||
+                productDocs[idx]['status'] == 'Pending') {
               if (widget.showFavorites &&
                   userFavoriteList.contains(productDocs[idx].id) &&
                   (categoryOption.toString() == 'All' ||

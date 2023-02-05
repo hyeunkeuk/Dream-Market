@@ -19,6 +19,7 @@ class NewAuthScreen extends StatefulWidget {
 class _NewAuthScreenState extends State<NewAuthScreen> {
   final _auth = FirebaseAuth.instance;
 
+  final String version = '1.1.3';
   var _isLoading = false;
 
   @override
@@ -54,12 +55,44 @@ class _NewAuthScreenState extends State<NewAuthScreen> {
         try {
           authResult = await _auth
               .signInWithEmailAndPassword(email: email, password: password)
-              .then((value) {
+              .then((value) async {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
                 builder: (context) => ProductOverviewScreen(),
               ),
             );
+            var versionID = await FirebaseFirestore.instance
+                .collection('version')
+                .doc('versionID')
+                .get();
+            var versionNumber = versionID['versionNumber'];
+            if (version != versionNumber) {
+              showDialog(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: Text(
+                    'Update Available!',
+                  ),
+                  content: Text(
+                    'There is a new version available. Please update to avoid any technical issues.',
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(ctx).pop(false);
+                      },
+                      child: Text(
+                        'Okay',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
           });
         } catch (error) {
           String errorMessage = error.message.toString();
@@ -225,7 +258,7 @@ class _NewAuthScreenState extends State<NewAuthScreen> {
                     ),
                   ),
                   Text(
-                    'Version: 1.1.3',
+                    'Version: ${version}',
                     style: TextStyle(
                       fontSize: 11,
                     ),

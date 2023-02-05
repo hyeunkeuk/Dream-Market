@@ -286,11 +286,24 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     ),
                                   ),
                                 )
-                          : Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 20,
-                              ),
-                              child: Icon(Icons.star)),
+                          : productDocs['status'] == 'Available'
+                              ? Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                  ),
+                                  child: Icon(Icons.star),
+                                )
+                              : Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                    decoration:
+                                        BoxDecoration(color: Colors.lightGreen),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text('Pending...'),
+                                    ),
+                                  ),
+                                ),
                     ],
                   ),
                   Container(

@@ -126,8 +126,21 @@ class _UserProductItemState extends State<UserProductItem> {
                         ? Text(
                             'Sold To: ${buyerData['firstName']} ${buyerData['lastName']}')
                         : widget.status == 'Pending'
-                            ? Text(
-                                'Requested by: ${buyerData['firstName']} ${buyerData['lastName']}')
+                            ? Row(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.shopping_cart,
+                                      color: Color.fromARGB(255, 189, 144, 197),
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 5,
+                                    ),
+                                  ),
+                                  Text(
+                                      '${buyerData['firstName']} ${buyerData['lastName']}'),
+                                ],
+                              )
                             : SizedBox.shrink()
                     : SizedBox.shrink(),
               ],
