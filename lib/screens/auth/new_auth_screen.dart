@@ -19,7 +19,7 @@ class NewAuthScreen extends StatefulWidget {
 class _NewAuthScreenState extends State<NewAuthScreen> {
   final _auth = FirebaseAuth.instance;
 
-  final String version = '1.1.3';
+  final String version = '1.1.4';
   var _isLoading = false;
 
   @override

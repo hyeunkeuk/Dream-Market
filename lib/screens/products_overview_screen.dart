@@ -48,6 +48,8 @@ class ProductOverviewScreen extends StatefulWidget {
 }
 
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
+  final String version = '1.1.4';
+
   var _showDream = true;
   var _showFavorites = false;
   var _isInit = true;
@@ -74,7 +76,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         .doc(user.uid)
         .get();
     await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
-      'version': '1.1.3',
+      'version': version,
       'lastLogin': timestamp,
     });
 

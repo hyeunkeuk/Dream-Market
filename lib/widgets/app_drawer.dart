@@ -14,6 +14,8 @@ import 'package:shopping/screens/qt/qt_screen.dart';
 class AppDrawer extends StatelessWidget {
   String username;
   String userStatus;
+  final String version = '1.1.4';
+
   AppDrawer(
     this.username,
     this.userStatus,
@@ -103,7 +105,7 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             Text(
-              'Version: 1.1.3',
+              'Version: ${version}',
               style: TextStyle(
                 fontSize: 11,
               ),
