@@ -9,13 +9,13 @@ class PasswordResetScreen extends StatefulWidget {
 }
 
 class _PasswordResetScreenState extends State<PasswordResetScreen> {
+  final firebaseAuth = FirebaseAuth.instance;
+  var _userEmail;
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController _emailController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
-    final firebaseAuth = FirebaseAuth.instance;
-    var _userEmail;
-    final _formKey = GlobalKey<FormState>();
-    TextEditingController _emailController = TextEditingController();
 
     return Scaffold(
       // resizeToAvoidBottomInset: false,
@@ -104,31 +104,123 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                       // FocusScope.of(context).unfocus();
                       if (isValid) {
                         _formKey.currentState.save();
-                        // firebaseAuth.sendPasswordResetEmail(email: _userEmail);
-                        showDialog(
-                          context: context,
-                          builder: (ctx) => AlertDialog(
-                            title: Text(
-                              'Password reset has been requested',
-                            ),
-                            content: Text(
-                              'Follow the link which has been sent to your email (${_userEmail}) to reset your password and try logging in again. \n\nPlease check your junk mail if you don\'t see the password reset email in your mail box.',
-                            ),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(ctx).pop(false);
-                                },
-                                child: Text(
-                                  'Okay',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                        firebaseAuth
+                            .sendPasswordResetEmail(email: _userEmail)
+                            .then(
+                          (value) {
+                            print('successful');
+                            showDialog(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                title: Text(
+                                  'Password reset has been requested',
                                 ),
+                                content: Text(
+                                  'Follow the link which has been sent to your email (${_userEmail}) to reset your password and try logging in again. \n\nPlease check your junk mail if you don\'t see the password reset email in your mail box.',
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(ctx).pop(false);
+                                    },
+                                    child: Text(
+                                      'Okay',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            );
+                          },
+                        ).catchError(
+                          (err) {
+                            print('error');
+
+                            if (err.toString().contains('invalid-email')) {
+                              showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  title: Text(
+                                    'Invalid Email',
+                                  ),
+                                  content: Text(
+                                    'The email address is badly formatted. Please check if you submitted the correct email address.',
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(ctx).pop(false);
+                                      },
+                                      child: Text(
+                                        'Okay',
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else if (err
+                                .toString()
+                                .contains('user-not-found')) {
+                              showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  title: Text(
+                                    'No Users Found',
+                                  ),
+                                  content: Text(
+                                    'The email address you entered is not registered. Please check if you submitted the correct email address.',
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(ctx).pop(false);
+                                      },
+                                      child: Text(
+                                        'Okay',
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  title: Text(
+                                    'Error!',
+                                  ),
+                                  content: Text(
+                                    '${err}',
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(ctx).pop(false);
+                                      },
+                                      child: Text(
+                                        'Okay',
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          },
                         );
                       } else {
                         print('not valid');
