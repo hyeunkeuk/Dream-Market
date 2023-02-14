@@ -11,6 +11,7 @@ import '../providers/products.dart';
 
 //Call from user product screen
 class UserProductItem extends StatefulWidget {
+  final String userStatus;
   final bool isDreamProduct;
   final String id;
   final String category;
@@ -26,6 +27,7 @@ class UserProductItem extends StatefulWidget {
   final String soldTo;
 
   UserProductItem(
+    this.userStatus,
     this.isDreamProduct,
     this.id,
     this.category,
@@ -182,7 +184,8 @@ class _UserProductItemState extends State<UserProductItem> {
                   IconButton(
                     icon: const Icon(Icons.delete),
                     color: Theme.of(context).errorColor,
-                    onPressed: widget.status == 'Available'
+                    onPressed: widget.userStatus == 'admin' ||
+                            widget.status == 'Available'
                         ? () {
                             showDialog(
                               context: context,
@@ -212,16 +215,9 @@ class _UserProductItemState extends State<UserProductItem> {
                                             FirebaseStorage.instance
                                                 .ref(element.fullPath)
                                                 .delete();
-                                            // .then((value) => print('Storage Deleted'))
-                                            // .catchError((error) => print(
-                                            //     'Failed to delete the storage data: ${error}'));
                                           });
                                         });
-
                                         await products.doc(widget.id).delete();
-                                        // .then((_) => print('Product Deleted'))
-                                        // .catchError((_) =>
-                                        //     print('Failed to delete the product'));
                                       } catch (error) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(

@@ -6,6 +6,11 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import '../../badge.dart';
 
+import 'package:flutter_native_image/flutter_native_image.dart';
+// import 'package:flutter_image_compress/flutter_image_compress.dart';
+
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 class ProductImagePicker extends StatefulWidget {
   final void Function(List<File> pickedImage) imagePickFn;
   final List<String> previousImageList;
@@ -92,21 +97,27 @@ class _ProductImagePickerState extends State<ProductImagePicker> {
     widget.imagePickFn(_listImage);
   }
 
+  Future<File> compressFile(File file) async {
+    File compressedFile = await FlutterNativeImage.compressImage(
+      file.path,
+      quality: 5,
+    );
+    return compressedFile;
+  }
+
   Future<void> _getPicture() async {
-    final imageFiles = await picker.pickMultiImage(
-        // source: ImageSource.gallery,
-        // maxWidth: 600,
-        );
-    // print(imageFiles);
-
+    final imageFiles = await picker.pickMultiImage();
     if (mounted) {
-      setState(() {
-        imageFiles.forEach((imageFile) {
-          _storedImage = File(imageFile.path);
-          _listImage.insert(0, _storedImage);
-        });
+      imageFiles.forEach((imageFile) async {
+        // print('Before compression: ${await File(imageFile.path).lengthSync()}');
 
-        // print(_listImage);
+        _storedImage =
+            await compressFile(File(imageFile.path)).then((value) async {
+          // print('After compression: ${await value.lengthSync()}');
+          setState(() {
+            _listImage.insert(0, value);
+          });
+        });
       });
     }
     widget.imagePickFn(_listImage);

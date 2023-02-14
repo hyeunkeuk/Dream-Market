@@ -269,10 +269,6 @@ class _OrderItemState extends State<OrderItem> {
                             setState(() {
                               fetchProductData().then((value) {
                                 updateOrderStatus().then((value) {
-                                  // print(
-                                  //     'productData[title]:${productData['title']}');
-                                  // print(
-                                  //     'productData[type]:${productData['type']}');
                                   if (productData['type'] == 'market') {
                                     updateProductAvailability();
                                   }

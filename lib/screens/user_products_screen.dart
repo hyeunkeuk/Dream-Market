@@ -150,6 +150,7 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
                                               return Column(
                                                 children: [
                                                   UserProductItem(
+                                                    userStatus,
                                                     true,
                                                     productDocs[i].id,
                                                     productDocs[i]['category'],
@@ -232,6 +233,7 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
                                       itemBuilder: (_, i) => Column(
                                         children: [
                                           UserProductItem(
+                                            userStatus,
                                             false,
                                             productDocs[i].id,
                                             productDocs[i]['category'],
