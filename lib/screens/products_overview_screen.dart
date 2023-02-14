@@ -17,6 +17,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'notification/notification.dart';
 import 'package:shopping/screens/edit_product_screen.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 enum MarketOptions {
   Dream,
@@ -48,8 +49,7 @@ class ProductOverviewScreen extends StatefulWidget {
 }
 
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
-  final String version = '1.1.4';
-
+  String version = '1.1.3';
   var _showDream = true;
   var _showFavorites = false;
   var _isInit = true;
@@ -91,16 +91,18 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
     // print('dream: ${dreamProductData}');
   }
 
-  // @override
-  void didChangeDependencies() {
+  @override
+  void didChangeDependencies() async {
     if (_isInit) {
       if (mounted) {
         setState(() {
           _isLoading = true;
         });
       }
-      // getAllProducts();
-      // BuildContext context;
+
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      version = packageInfo.version;
+
       getUserData().then((value) {
         if (userData['status'] == 'deleted') {
           Navigator.of(context).pushReplacement(

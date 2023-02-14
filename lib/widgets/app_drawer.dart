@@ -10,16 +10,45 @@ import '../screens/products_overview_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shopping/screens/setting/account_deletion_request_screen.dart';
 import 'package:shopping/screens/qt/qt_screen.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
-class AppDrawer extends StatelessWidget {
+class AppDrawer extends StatefulWidget {
   String username;
   String userStatus;
-  final String version = '1.1.4';
 
   AppDrawer(
     this.username,
     this.userStatus,
   );
+
+  @override
+  State<AppDrawer> createState() => _AppDrawerState();
+}
+
+class _AppDrawerState extends State<AppDrawer> {
+  String version = '1.1.3';
+  var _isInit = true;
+  var _isLoading = false;
+
+  @override
+  void didChangeDependencies() async {
+    if (_isInit) {
+      if (mounted) {
+        setState(() {
+          _isLoading = true;
+        });
+      }
+      // TODO: implement didChangeDependencies
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      version = packageInfo.version;
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +59,7 @@ class AppDrawer extends StatelessWidget {
             AppBar(
               backgroundColor: Theme.of(context).primaryColor,
               title: Text(
-                'Hello, ' + username + '!',
+                'Hello, ' + widget.username + '!',
                 // softWrap: true,
                 overflow: TextOverflow.fade,
               ),
@@ -74,8 +103,8 @@ class AppDrawer extends StatelessWidget {
                 Navigator.of(context).pushNamed(SettingScreen.routeName);
               },
             ),
-            userStatus == 'admin' ? Divider() : SizedBox.shrink(),
-            userStatus == 'admin'
+            widget.userStatus == 'admin' ? Divider() : SizedBox.shrink(),
+            widget.userStatus == 'admin'
                 ? ListTile(
                     leading: Icon(Icons.admin_panel_settings_sharp),
                     title: Text('Account Deletion Requests'),

@@ -107,7 +107,7 @@ class _QTtileState extends State<QTtile> {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
-                    child: Text(widget.content),
+                    child: SelectableText(widget.content),
                   ),
                 ),
               )

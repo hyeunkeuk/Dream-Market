@@ -9,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class NewAuthScreen extends StatefulWidget {
   static const routeName = '/newAuth';
@@ -18,8 +19,9 @@ class NewAuthScreen extends StatefulWidget {
 
 class _NewAuthScreenState extends State<NewAuthScreen> {
   final _auth = FirebaseAuth.instance;
+  var _isInit = true;
 
-  final String version = '1.1.4';
+  String version = '1.1.3';
   var _isLoading = false;
 
   @override
@@ -33,6 +35,26 @@ class _NewAuthScreenState extends State<NewAuthScreen> {
     //       MaterialPageRoute(builder: (context) => ProductOverviewScreen()));
     // }
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() async {
+    if (_isInit) {
+      if (mounted) {
+        setState(() {
+          _isLoading = true;
+        });
+      }
+      // TODO: implement didChangeDependencies
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      version = packageInfo.version;
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+    super.didChangeDependencies();
   }
 
   void _submitAuthForm(
@@ -64,35 +86,37 @@ class _NewAuthScreenState extends State<NewAuthScreen> {
             var versionID = await FirebaseFirestore.instance
                 .collection('version')
                 .doc('versionID')
-                .get();
-            var versionNumber = versionID['versionNumber'];
-            if (version != versionNumber) {
-              showDialog(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                  title: Text(
-                    'Update Available!',
-                  ),
-                  content: Text(
-                    'There is a new version available. Please update to avoid any technical issues.',
-                  ),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(ctx).pop(false);
-                      },
-                      child: Text(
-                        'Okay',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
+                .get()
+                .then((value) {
+              var versionNumber = value['versionNumber'];
+              if (version != versionNumber) {
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: Text(
+                      'Update Available!',
+                    ),
+                    content: Text(
+                      'There is a new version available. Please update to avoid any technical issues.',
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(ctx).pop(false);
+                        },
+                        child: Text(
+                          'Okay',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }
+                    ],
+                  ),
+                );
+              }
+            });
           });
         } catch (error) {
           String errorMessage = error.message.toString();
@@ -257,12 +281,14 @@ class _NewAuthScreenState extends State<NewAuthScreen> {
                       _isLoading,
                     ),
                   ),
-                  Text(
-                    'Version: ${version}',
-                    style: TextStyle(
-                      fontSize: 11,
-                    ),
-                  ),
+                  _isLoading
+                      ? SizedBox.shrink()
+                      : Text(
+                          'Version: ${version}',
+                          style: TextStyle(
+                            fontSize: 11,
+                          ),
+                        ),
                 ],
               ),
             ),
