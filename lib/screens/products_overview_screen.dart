@@ -161,56 +161,95 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
           ),
           actions: <Widget>[
             IconButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (ctx) => AlertDialog(
-                    title: Text(
-                      'REMINDER!',
-                    ),
-                    content: SizedBox(
-                      height: 180,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Please note that you are donating your item to Vancouver Dream Church.',
+              onPressed: () async {
+                var versionID = await FirebaseFirestore.instance
+                    .collection('version')
+                    .doc('versionID')
+                    .get()
+                    .then(
+                  (value) {
+                    var versionNumber = value['versionNumber'];
+                    if (version != versionNumber) {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text(
+                            'Update Available!',
                           ),
-                          Text(
-                            '\nAll the profit of your item goes to Vancouver Dream Church.',
+                          content: const Text(
+                            'There is a new version available. Please update to avoid any technical issues.',
                           ),
-                          Text(
-                            '\nDo you agree?',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () async {
-                          Navigator.of(ctx).pop(false);
-                          Navigator.of(context)
-                              .pushNamed(EditProductScreen.routeName);
-                        },
-                        child: Text(
-                          'I Agree',
-                          style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.bold),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(ctx).pop(false);
+                              },
+                              child: const Text(
+                                'Okay',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          Navigator.of(ctx).pop(false);
-                        },
-                        child: Text(
-                          'No',
-                          style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.bold),
+                      );
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: Text(
+                            'REMINDER!',
+                          ),
+                          content: SizedBox(
+                            height: 180,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Please note that you are donating your item to Vancouver Dream Church.',
+                                ),
+                                Text(
+                                  '\nAll the profit of your item goes to Vancouver Dream Church.',
+                                ),
+                                Text(
+                                  '\nDo you agree?',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.of(ctx).pop(false);
+                                Navigator.of(context)
+                                    .pushNamed(EditProductScreen.routeName);
+                              },
+                              child: Text(
+                                'I Agree',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.of(ctx).pop(false);
+                              },
+                              child: Text(
+                                'No',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
+                      );
+                    }
+                  },
                 );
               },
               icon: const Icon(Icons.add),
@@ -270,8 +309,46 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
                   Icons.mail_rounded,
                   color: Colors.black,
                 ),
-                onPressed: () {
-                  Navigator.of(context).pushNamed(MessageInboxScreen.routeName);
+                onPressed: () async {
+                  var versionID = await FirebaseFirestore.instance
+                      .collection('version')
+                      .doc('versionID')
+                      .get()
+                      .then(
+                    (value) {
+                      var versionNumber = value['versionNumber'];
+                      if (version != versionNumber) {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: const Text(
+                              'Update Available!',
+                            ),
+                            content: const Text(
+                              'There is a new version available. Please update to avoid any technical issues.',
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(ctx).pop(false);
+                                },
+                                child: const Text(
+                                  'Okay',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      } else {
+                        Navigator.of(context)
+                            .pushNamed(MessageInboxScreen.routeName);
+                      }
+                    },
+                  );
                 },
               ),
               style: ButtonStyle(

@@ -53,7 +53,7 @@ exports.orderCreateFunction = functions.firestore
       const payload = {
         notification: {
           title: "New Order Has Been Requested!",
-          body: snapshot.data().title,
+          body: snapshot.data().creatorName + " ordered " + snapshot.data().title,
           clickAction: "FLUTTER_NOTIFICATION_CLICK",
         },
       };
@@ -85,7 +85,7 @@ exports.orderUpdateFunction = functions.firestore
                   const payload = {
                     notification: {
                       title: "Your Product Availability Has Been Updated!",
-                      // body: contentMessage,
+                      body: doc.title,
                       clickAction: "FLUTTER_NOTIFICATION_CLICK",
                       // badge: '1',
                       sound: "default",
@@ -102,7 +102,7 @@ exports.orderUpdateFunction = functions.firestore
             const payload = {
               notification: {
                 title: "Your Order Status Has Been Updated!",
-                // body: contentMessage,
+                body: doc.title,
                 clickAction: "FLUTTER_NOTIFICATION_CLICK",
                 // badge: '1',
                 sound: "default",
