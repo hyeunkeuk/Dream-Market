@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ImageScroller extends StatefulWidget {
@@ -14,9 +15,13 @@ class _ImageScrollerState extends State<ImageScroller> {
   Widget buildImage(String urlImage, int index) => Container(
         margin: EdgeInsets.symmetric(horizontal: 12),
         color: Colors.grey,
-        child: Image.network(
-          urlImage,
-          fit: BoxFit.cover,
+        child: CachedNetworkImage(
+          imageUrl: urlImage,
+          progressIndicatorBuilder: (context, url, progress) => Center(
+              child: CircularProgressIndicator(
+            value: progress.progress,
+          )),
+          fit: BoxFit.fitHeight,
         ),
       );
   Widget buildIndicator(int listCount) => AnimatedSmoothIndicator(

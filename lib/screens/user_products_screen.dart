@@ -114,18 +114,19 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
                         ? Column(
                             children: [
                               Container(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      'Dream',
-                                      style: TextStyle(
-                                        // color: Colors.pink.shade300,
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    'Dream',
+                                    style: TextStyle(
+                                      // color: Colors.pink.shade300,
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                  )),
+                                  ),
+                                ),
+                              ),
                               SingleChildScrollView(
                                 child: StreamBuilder(
                                     stream: FirebaseFirestore.instance
@@ -189,18 +190,19 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
                     Column(
                       children: [
                         Container(
-                            alignment: Alignment.centerLeft,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'Products',
-                                style: TextStyle(
-                                  // color: Colors.pink.shade300,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'Products',
+                              style: TextStyle(
+                                // color: Colors.pink.shade300,
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
                               ),
-                            )),
+                            ),
+                          ),
+                        ),
                         SingleChildScrollView(
                           child: StreamBuilder(
                               stream: userStatus == 'admin'

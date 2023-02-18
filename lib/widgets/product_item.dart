@@ -8,6 +8,7 @@ import '../providers/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../providers/user_favorite.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 //calls from product grid item
 class ProductItem extends StatefulWidget {
@@ -140,7 +141,14 @@ class _ProductItemState extends State<ProductItem> {
                   );
                 },
                 child: widget.imageUrl != ''
-                    ? Image.network(widget.imageUrl[0], fit: BoxFit.cover)
+                    ? CachedNetworkImage(
+                        imageUrl: widget.imageUrl[0],
+                        progressIndicatorBuilder: (context, url, progress) =>
+                            Center(
+                                child: CircularProgressIndicator(
+                              value: progress.progress,
+                            )),
+                        fit: BoxFit.fitHeight)
                     : const Align(
                         alignment: Alignment.center,
                         child: Text(

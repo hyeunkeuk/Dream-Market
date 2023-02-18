@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 
 import '../screens/edit_product_screen.dart';
 import '../providers/products.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 // import 'dart:io';
 
 //Call from user product screen
@@ -109,7 +111,7 @@ class _UserProductItemState extends State<UserProductItem> {
                       child: CircleAvatar(
                         backgroundImage: widget.imageUrl[0] != null
                             ? widget.imageUrl[0] != ''
-                                ? NetworkImage(widget.imageUrl[0])
+                                ? CachedNetworkImageProvider(widget.imageUrl[0])
                                 : null
                             : null,
                       ),

@@ -145,191 +145,182 @@ class _OrderItemState extends State<OrderItem> {
   var _expanded = false;
   @override
   Widget build(BuildContext context) {
-    // print(_isLoading);
-    // print(widget.orderId);
-    // print(widget.creatorId);
-    // print(userData['firstName']);
-
-    return _isLoading
-        ? Center(child: CircularProgressIndicator())
-        : Card(
-            margin: EdgeInsets.all(10),
-            child: Column(
-              children: <Widget>[
-                ListTile(
-                  leading: widget.status == 'accepted'
-                      ? ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.lightGreen,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              fetchProductData().then((value) {
-                                completeOrderStatus().then((value) {});
-                                widget.orderScreenSetstate();
-                              });
-                            });
-                          },
-                          child: Text(
-                            'Received',
-                          ),
-                        )
-                      : Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 10),
-                          color: widget.status == 'Completed'
-                              ? Colors.green
-                              : Colors.yellow,
-                          child: Text(widget.status),
-                        ),
-                  title: widget.userStatus == 'dreamer'
-                      ? Text('${widget.title}\nAmount: \$${widget.amount}')
-                      : Text(
-                          '${widget.creatorName} (${widget.creatorEmail})\n${widget.title}\nAmount: \$${widget.amount}'),
-                  subtitle: Text(
-                      "${widget.dateModified.substring(0, 10)} ${widget.dateModified.substring(24)}"),
-                  trailing: widget.userStatus == 'dreamer'
-                      ? IconButton(
-                          icon: Icon(Icons.delete),
-                          onPressed: widget.status == 'Pending'
-                              ? () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (ctx) => AlertDialog(
-                                      title: Text(
-                                        'Are you sure?',
-                                      ),
-                                      content: Text(
-                                        'Do you want to cancel the order?',
-                                      ),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () async {
-                                            Navigator.of(ctx).pop(false);
-                                            try {
-                                              setState(() {
-                                                deleteOrder();
-                                              });
-                                            } catch (error) {}
-                                          },
-                                          child: Text(
-                                            'Confirm',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(ctx).pop(false);
-                                          },
-                                          child: Text(
-                                            'No',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }
-                              : null,
-                        )
-                      : IconButton(
-                          icon: Icon(_expanded
-                              ? Icons.expand_less
-                              : Icons.expand_more),
-                          onPressed: () {
-                            setState(() {
-                              _expanded = !_expanded;
-                            });
-                          },
-                        ),
-                ),
-                if (_expanded)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 0),
-                        child: ElevatedButton(
-                          style: widget.status == 'Pending'
-                              ? ElevatedButton.styleFrom(
-                                  primary: Colors.green,
-                                )
-                              : ElevatedButton.styleFrom(
-                                  primary: Colors.grey,
-                                ),
-                          onPressed: () {
-                            // Only update the product availability if the product is a market product
-
-                            setState(() {
-                              fetchProductData().then((value) {
-                                updateOrderStatus().then((value) {
-                                  if (productData['type'] == 'market') {
-                                    updateProductAvailability();
-                                  }
-                                  _expanded = !_expanded;
-                                });
-
-                                widget.orderScreenSetstate();
-                              });
-                            });
-                          },
-                          child: widget.status == 'Pending'
-                              ? Text(
-                                  'Confirm',
-                                )
-                              : Text(
-                                  'Cancel',
-                                ),
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: widget.status == 'Pending'
-                            ? () {
-                                showDialog(
-                                  context: context,
-                                  builder: (ctx) => AlertDialog(
-                                    title: Text(
-                                      'Are you sure?',
-                                    ),
-                                    content: Text(
-                                      'Do you want to cancel the order?',
-                                    ),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(ctx).pop(false);
-                                        },
-                                        child: Text('No'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () async {
-                                          Navigator.of(ctx).pop(false);
-                                          try {
-                                            setState(() {
-                                              deleteOrder();
-                                              widget.orderScreenSetstate();
-                                            });
-                                          } catch (error) {}
-                                        },
-                                        child: Text('Confirm'),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }
-                            : null,
-                      ),
-                    ],
+    return Card(
+      margin: EdgeInsets.all(10),
+      child: Column(
+        children: <Widget>[
+          ListTile(
+            leading: widget.status == 'accepted'
+                ? ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.lightGreen,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        fetchProductData().then((value) {
+                          completeOrderStatus().then((value) {});
+                          widget.orderScreenSetstate();
+                        });
+                      });
+                    },
+                    child: Text(
+                      'Received',
+                    ),
                   )
+                : Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    color: widget.status == 'Completed'
+                        ? Colors.green
+                        : Colors.yellow,
+                    child: Text(widget.status),
+                  ),
+            title: widget.userStatus == 'dreamer'
+                ? Text('${widget.title}\nAmount: \$${widget.amount}')
+                : Text(
+                    '${widget.creatorName} (${widget.creatorEmail})\n${widget.title}\nAmount: \$${widget.amount}'),
+            subtitle: Text(
+                "${widget.dateModified.substring(0, 10)} ${widget.dateModified.substring(24)}"),
+            trailing: widget.userStatus == 'dreamer'
+                ? IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: widget.status == 'Pending'
+                        ? () {
+                            showDialog(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                title: Text(
+                                  'Are you sure?',
+                                ),
+                                content: Text(
+                                  'Do you want to cancel the order?',
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () async {
+                                      Navigator.of(ctx).pop(false);
+                                      try {
+                                        setState(() {
+                                          deleteOrder();
+                                        });
+                                      } catch (error) {}
+                                    },
+                                    child: Text(
+                                      'Confirm',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(ctx).pop(false);
+                                    },
+                                    child: Text(
+                                      'No',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        : null,
+                  )
+                : IconButton(
+                    icon:
+                        Icon(_expanded ? Icons.expand_less : Icons.expand_more),
+                    onPressed: () {
+                      setState(() {
+                        _expanded = !_expanded;
+                      });
+                    },
+                  ),
+          ),
+          if (_expanded)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 0),
+                  child: ElevatedButton(
+                    style: widget.status == 'Pending'
+                        ? ElevatedButton.styleFrom(
+                            primary: Colors.green,
+                          )
+                        : ElevatedButton.styleFrom(
+                            primary: Colors.grey,
+                          ),
+                    onPressed: () {
+                      // Only update the product availability if the product is a market product
+
+                      setState(() {
+                        fetchProductData().then((value) {
+                          updateOrderStatus().then((value) {
+                            if (productData['type'] == 'market') {
+                              updateProductAvailability();
+                            }
+                            _expanded = !_expanded;
+                          });
+
+                          widget.orderScreenSetstate();
+                        });
+                      });
+                    },
+                    child: widget.status == 'Pending'
+                        ? Text(
+                            'Confirm',
+                          )
+                        : Text(
+                            'Cancel',
+                          ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: widget.status == 'Pending'
+                      ? () {
+                          showDialog(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: Text(
+                                'Are you sure?',
+                              ),
+                              content: Text(
+                                'Do you want to cancel the order?',
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(ctx).pop(false);
+                                  },
+                                  child: Text('No'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.of(ctx).pop(false);
+                                    try {
+                                      setState(() {
+                                        deleteOrder();
+                                        widget.orderScreenSetstate();
+                                      });
+                                    } catch (error) {}
+                                  },
+                                  child: Text('Confirm'),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      : null,
+                ),
               ],
-            ),
-          );
+            )
+        ],
+      ),
+    );
   }
 }

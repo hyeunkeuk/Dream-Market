@@ -116,6 +116,12 @@ class _NewAuthScreenState extends State<NewAuthScreen> {
                       ],
                     ),
                   );
+                } else {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => ProductOverviewScreen(),
+                    ),
+                  );
                 }
               },
             );
