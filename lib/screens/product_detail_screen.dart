@@ -13,6 +13,8 @@ import '../providers/cart.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'package:shopping/widgets/update_alert.dart';
+
 //Call from Product item
 class ProductDetailScreen extends StatefulWidget {
   static const routeName = '/product-detail';
@@ -170,33 +172,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                         var versionNumber =
                                             value['versionNumber'];
                                         if (version != versionNumber) {
-                                          showDialog(
-                                            context: context,
-                                            builder: (ctx) => AlertDialog(
-                                              title: const Text(
-                                                'Update Available!',
-                                              ),
-                                              content: const Text(
-                                                'There is a new version available. Please update to avoid any technical issues.',
-                                              ),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.of(ctx)
-                                                        .pop(false);
-                                                  },
-                                                  child: const Text(
-                                                    'Okay',
-                                                    style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
+                                          update_alert(context);
                                         } else {
                                           showDialog(
                                             context: context,
@@ -425,31 +401,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               (value) async {
                                 var versionNumber = value['versionNumber'];
                                 if (version != versionNumber) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (ctx) => AlertDialog(
-                                      title: const Text(
-                                        'Update Available!',
-                                      ),
-                                      content: const Text(
-                                        'There is a new version available. Please update to avoid any technical issues.',
-                                      ),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(ctx).pop(false);
-                                          },
-                                          child: const Text(
-                                            'Okay',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
+                                  update_alert(context);
                                 } else {
                                   CollectionReference chatRooms =
                                       FirebaseFirestore.instance

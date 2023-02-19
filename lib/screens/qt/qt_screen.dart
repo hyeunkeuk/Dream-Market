@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shopping/screens/qt/qts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:audioplayers/audioplayers.dart';
+// import 'package:flutter_audio_manager_plus/flutter_audio_manager_plus.dart';
 
 class QTScreen extends StatefulWidget {
   // const QTScreen({Key key}) : super(key: key);
@@ -19,6 +21,8 @@ class _QTScreenState extends State<QTScreen> {
   bool showDone = false;
   bool showAdd = true;
 
+  // final qtAudio = QTAudio();
+
   final _contentFocusNode = FocusNode();
   final _titleFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
@@ -28,16 +32,58 @@ class _QTScreenState extends State<QTScreen> {
 
   var engKor = 'Korean';
 
+  bool isplaying = false;
+
+  bool audioplayed = false;
+
+  bool isMute = true;
+
+  AudioPlayer player = AudioPlayer();
+  // AudioInput _currentInput = AudioInput("unknow", 0);
+  // List<AudioInput> _availableInputs = [];
+
+  // Future<void> init() async {
+  //   FlutterAudioManagerPlus.setListener(() async {
+  //     print("-----changed-------");
+  //     await _getInput();
+  //     setState(() {});
+  //   });
+
+  //   await _getInput();
+  //   if (!mounted) return;
+  //   setState(() {});
+  // }
+
+  // _getInput() async {
+  //   _currentInput = await FlutterAudioManagerPlus.getCurrentOutput();
+  //   print("current:$_currentInput");
+  //   _availableInputs = await FlutterAudioManagerPlus.getAvailableInputs();
+  //   print("available $_availableInputs");
+  // }
+
+  @override
+  void initState() {
+    Future.delayed(Duration.zero, () async {
+      await player.setSource(AssetSource('audio/qt_audio.mp3'));
+      isMute ? player.stop() : player.resume();
+    });
+    // init();
+    // FlutterAudioManagerPlus.changeToSpeaker();
+    // player.play(att);
+    super.initState();
+  }
+
   void changeLanguage(lang) {
     setState(() {
       engKor = lang;
     });
   }
 
+  @override
   void dispose() {
     _titleFocusNode.dispose();
     _contentFocusNode.dispose();
-
+    player.stop();
     super.dispose();
   }
 
@@ -129,18 +175,37 @@ class _QTScreenState extends State<QTScreen> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.blueGrey,
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Text(
-                            todayQT['verse'],
-                            style: TextStyle(color: Colors.white),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(width: 30),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.blueGrey,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20)),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text(
+                                todayQT['verse'],
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
                           ),
-                        ),
+                          IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isMute = !isMute;
+                              });
+                              isMute ? player.stop() : player.resume();
+                            },
+                            icon: isMute
+                                ? Icon(Icons.volume_off)
+                                : Icon(Icons.volume_up),
+                          ),
+                          // QTAudio(),
+                        ],
                       ),
                     ),
                     Padding(

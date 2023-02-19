@@ -12,6 +12,8 @@ import 'package:shopping/screens/setting/account_deletion_request_screen.dart';
 import 'package:shopping/screens/qt/qt_screen.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'package:shopping/widgets/update_alert.dart';
+
 class AppDrawer extends StatefulWidget {
   String username;
   String userStatus;
@@ -49,32 +51,9 @@ class _AppDrawerState extends State<AppDrawer> {
         (value) {
           var versionNumber = value['versionNumber'];
           if (version != versionNumber) {
-            showDialog(
-              context: context,
-              builder: (ctx) => AlertDialog(
-                title: const Text(
-                  'Update Available!',
-                ),
-                content: const Text(
-                  'There is a new version available. Please update to avoid any technical issues.',
-                ),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(ctx).pop(false);
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text(
-                      'Okay',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
+            Navigator.of(context).pop();
+
+            update_alert(context);
           }
         },
       );

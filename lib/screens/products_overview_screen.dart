@@ -19,6 +19,8 @@ import 'notification/notification.dart';
 import 'package:shopping/screens/edit_product_screen.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'package:shopping/widgets/update_alert.dart';
+
 enum MarketOptions {
   Dream,
   Market,
@@ -170,31 +172,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
                   (value) {
                     var versionNumber = value['versionNumber'];
                     if (version != versionNumber) {
-                      showDialog(
-                        context: context,
-                        builder: (ctx) => AlertDialog(
-                          title: const Text(
-                            'Update Available!',
-                          ),
-                          content: const Text(
-                            'There is a new version available. Please update to avoid any technical issues.',
-                          ),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(ctx).pop(false);
-                              },
-                              child: const Text(
-                                'Okay',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
+                      update_alert(context);
                     } else {
                       showDialog(
                         context: context,
@@ -318,31 +296,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
                     (value) {
                       var versionNumber = value['versionNumber'];
                       if (version != versionNumber) {
-                        showDialog(
-                          context: context,
-                          builder: (ctx) => AlertDialog(
-                            title: const Text(
-                              'Update Available!',
-                            ),
-                            content: const Text(
-                              'There is a new version available. Please update to avoid any technical issues.',
-                            ),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(ctx).pop(false);
-                                },
-                                child: const Text(
-                                  'Okay',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
+                        update_alert(context);
                       } else {
                         Navigator.of(context)
                             .pushNamed(MessageInboxScreen.routeName);

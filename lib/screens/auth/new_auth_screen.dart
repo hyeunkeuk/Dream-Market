@@ -11,6 +11,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'package:store_redirect/store_redirect.dart';
+import 'package:shopping/widgets/update_alert.dart';
+
 class NewAuthScreen extends StatefulWidget {
   static const routeName = '/newAuth';
   @override
@@ -51,6 +54,7 @@ class _NewAuthScreenState extends State<NewAuthScreen> {
       if (mounted) {
         setState(() {
           _isLoading = false;
+          _isInit = false;
         });
       }
     }
@@ -86,36 +90,7 @@ class _NewAuthScreenState extends State<NewAuthScreen> {
               (value) {
                 var versionNumber = value['versionNumber'];
                 if (version != versionNumber) {
-                  showDialog(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: const Text(
-                        'Update Available!',
-                      ),
-                      content: const Text(
-                        'There is a new version available. Please update to avoid any technical issues.',
-                      ),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(ctx).pop(false);
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (context) => ProductOverviewScreen(),
-                              ),
-                            );
-                          },
-                          child: const Text(
-                            'Okay',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
+                  update_alert(context);
                 } else {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
