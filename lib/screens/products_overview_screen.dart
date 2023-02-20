@@ -20,6 +20,7 @@ import 'package:shopping/screens/edit_product_screen.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:shopping/widgets/update_alert.dart';
+import 'dart:io' show Platform;
 
 enum MarketOptions {
   Dream,
@@ -56,6 +57,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   var _showFavorites = false;
   var _isInit = true;
   var _isLoading = false;
+  var versionNumber;
 
   final user = FirebaseAuth.instance.currentUser;
   var userData;
@@ -164,71 +166,63 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
           actions: <Widget>[
             IconButton(
               onPressed: () async {
-                var versionID = await FirebaseFirestore.instance
-                    .collection('version')
-                    .doc('versionID')
-                    .get()
-                    .then(
-                  (value) {
-                    var versionNumber = value['versionNumber'];
-                    if (version != versionNumber) {
-                      update_alert(context);
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (ctx) => AlertDialog(
-                          title: Text(
-                            'REMINDER!',
-                          ),
-                          content: SizedBox(
-                            height: 180,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Please note that you are donating your item to Vancouver Dream Church.',
-                                ),
-                                Text(
-                                  '\nAll the profit of your item goes to Vancouver Dream Church.',
-                                ),
-                                Text(
-                                  '\nDo you agree?',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ],
+                var versionNumber = await versionCheck();
+                if (version != versionNumber) {
+                  update_alert(context);
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: Text(
+                        'REMINDER!',
+                      ),
+                      content: SizedBox(
+                        height: 180,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Please note that you are donating your item to Vancouver Dream Church.',
                             ),
-                          ),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () async {
-                                Navigator.of(ctx).pop(false);
-                                Navigator.of(context)
-                                    .pushNamed(EditProductScreen.routeName);
-                              },
-                              child: Text(
-                                'I Agree',
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                            Text(
+                              '\nAll the profit of your item goes to Vancouver Dream Church.',
                             ),
-                            TextButton(
-                              onPressed: () async {
-                                Navigator.of(ctx).pop(false);
-                              },
-                              child: Text(
-                                'No',
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                            Text(
+                              '\nDo you agree?',
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
-                      );
-                    }
-                  },
-                );
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () async {
+                            Navigator.of(ctx).pop(false);
+                            Navigator.of(context)
+                                .pushNamed(EditProductScreen.routeName);
+                          },
+                          child: Text(
+                            'I Agree',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            Navigator.of(ctx).pop(false);
+                          },
+                          child: Text(
+                            'No',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
               },
               icon: const Icon(Icons.add),
             ),
@@ -288,21 +282,13 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
                   color: Colors.black,
                 ),
                 onPressed: () async {
-                  var versionID = await FirebaseFirestore.instance
-                      .collection('version')
-                      .doc('versionID')
-                      .get()
-                      .then(
-                    (value) {
-                      var versionNumber = value['versionNumber'];
-                      if (version != versionNumber) {
-                        update_alert(context);
-                      } else {
-                        Navigator.of(context)
-                            .pushNamed(MessageInboxScreen.routeName);
-                      }
-                    },
-                  );
+                  var versionNumber = await versionCheck();
+                  if (version != versionNumber) {
+                    update_alert(context);
+                  } else {
+                    Navigator.of(context)
+                        .pushNamed(MessageInboxScreen.routeName);
+                  }
                 },
               ),
               style: ButtonStyle(

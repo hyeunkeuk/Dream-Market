@@ -82,24 +82,16 @@ class _NewAuthScreenState extends State<NewAuthScreen> {
           authResult = await _auth
               .signInWithEmailAndPassword(email: email, password: password)
               .then((value) async {
-            var versionID = await FirebaseFirestore.instance
-                .collection('version')
-                .doc('versionID')
-                .get()
-                .then(
-              (value) {
-                var versionNumber = value['versionNumber'];
-                if (version != versionNumber) {
-                  update_alert(context);
-                } else {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) => ProductOverviewScreen(),
-                    ),
-                  );
-                }
-              },
-            );
+            var versionNumber = await versionCheck();
+            if (version != versionNumber) {
+              update_alert_to_main(context);
+            } else {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => ProductOverviewScreen(),
+                ),
+              );
+            }
           });
         } catch (error) {
           String errorMessage = error.message.toString();
@@ -154,14 +146,14 @@ class _NewAuthScreenState extends State<NewAuthScreen> {
       var errorMessage = 'An error occurred, please check your credentials!';
 
       if (error != null) {
-        errorMessage = error.message;
+        // errorMessage = error.message;
       } else {
         print('error is null');
       }
       // print('hi');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(errorMessage),
+          content: Text(error.toString()),
           backgroundColor: Theme.of(ctx).errorColor,
         ),
       );
@@ -172,11 +164,11 @@ class _NewAuthScreenState extends State<NewAuthScreen> {
         });
       }
     } catch (error) {
-      String errorMessage = error.message;
+      // String errorMessage = error.message;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(errorMessage),
+          content: Text(error.toString()),
           backgroundColor: Theme.of(ctx).errorColor,
         ),
       );

@@ -14,6 +14,7 @@ import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:shopping/widgets/update_alert.dart';
+import 'dart:io' show Platform;
 
 //Call from Product item
 class ProductDetailScreen extends StatefulWidget {
@@ -25,7 +26,7 @@ class ProductDetailScreen extends StatefulWidget {
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   String version = '1.1.3';
-
+  // var versionNumber;
   bool isMyProduct = false;
   var _isInit = true;
   var _isLoading = true;
@@ -48,6 +49,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   void initState() {
     updateUserCurrentScreen();
+
     super.initState();
   }
 
@@ -162,159 +164,137 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   ),
                                   color: Theme.of(context).accentColor,
                                   onPressed: () async {
-                                    var versionID = await FirebaseFirestore
-                                        .instance
-                                        .collection('version')
-                                        .doc('versionID')
-                                        .get()
-                                        .then(
-                                      (value) {
-                                        var versionNumber =
-                                            value['versionNumber'];
-                                        if (version != versionNumber) {
-                                          update_alert(context);
-                                        } else {
-                                          showDialog(
-                                            context: context,
-                                            builder: (ctx) => AlertDialog(
-                                              title: Text(
-                                                'Order Confirmation',
+                                    var versionNumber = await versionCheck();
+                                    if (version != versionNumber) {
+                                      update_alert(context);
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (ctx) => AlertDialog(
+                                          title: Text(
+                                            'Order Confirmation',
+                                          ),
+                                          content: Text(
+                                            'Do you want to order the following item(s)?',
+                                          ),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              child: Text(
+                                                'Confirm',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                               ),
-                                              content: Text(
-                                                'Do you want to order the following item(s)?',
-                                              ),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  child: Text(
-                                                    'Confirm',
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                  onPressed: () async {
-                                                    final timestamp =
-                                                        DateTime.now();
-                                                    final orderTimeStamp =
-                                                        DateFormat(
-                                                                'yyyy-MM-dd HH:mm:ss.SSS')
-                                                            .add_jm()
-                                                            .format(timestamp);
+                                              onPressed: () async {
+                                                final timestamp =
+                                                    DateTime.now();
+                                                final orderTimeStamp = DateFormat(
+                                                        'yyyy-MM-dd HH:mm:ss.SSS')
+                                                    .add_jm()
+                                                    .format(timestamp);
 
-                                                    if (type == 'market') {
-                                                      await FirebaseFirestore
-                                                          .instance
-                                                          .collection(
-                                                              'products')
-                                                          .doc(productId)
-                                                          .update({
-                                                        'status': 'Pending',
-                                                        'soldTo': user.uid,
-                                                      });
-                                                    } else {
-                                                      await FirebaseFirestore
-                                                          .instance
-                                                          .collection(
-                                                              'products')
-                                                          .doc(productId)
-                                                          .update({
-                                                        'soldTo': user.uid,
-                                                      });
-                                                    }
+                                                if (type == 'market') {
+                                                  await FirebaseFirestore
+                                                      .instance
+                                                      .collection('products')
+                                                      .doc(productId)
+                                                      .update({
+                                                    'status': 'Pending',
+                                                    'soldTo': user.uid,
+                                                  });
+                                                } else {
+                                                  await FirebaseFirestore
+                                                      .instance
+                                                      .collection('products')
+                                                      .doc(productId)
+                                                      .update({
+                                                    'soldTo': user.uid,
+                                                  });
+                                                }
 
-                                                    await FirebaseFirestore
-                                                        .instance
-                                                        .collection('users')
-                                                        .doc(user.uid)
-                                                        .get()
-                                                        .then((userData) async {
-                                                      await FirebaseFirestore
-                                                          .instance
-                                                          .collection('orders')
-                                                          .add(
-                                                        {
-                                                          'creatorId': user.uid,
-                                                          'creatorName':
-                                                              userData[
-                                                                  'firstName'],
-                                                          'creatorEmail':
-                                                              userData['email'],
-                                                          'dateModified':
-                                                              orderTimeStamp,
-                                                          'amount': productDocs[
-                                                              'price'],
-                                                          'dateTime':
-                                                              orderTimeStamp,
-                                                          'title': productDocs[
-                                                              'title'],
-                                                          'productId':
-                                                              productId,
-                                                          'productOwnerId':
-                                                              productDocs[
-                                                                  'creatorId'],
-                                                          'status': 'Pending'
+                                                await FirebaseFirestore.instance
+                                                    .collection('users')
+                                                    .doc(user.uid)
+                                                    .get()
+                                                    .then((userData) async {
+                                                  await FirebaseFirestore
+                                                      .instance
+                                                      .collection('orders')
+                                                      .add(
+                                                    {
+                                                      'creatorId': user.uid,
+                                                      'creatorName':
+                                                          userData['firstName'],
+                                                      'creatorEmail':
+                                                          userData['email'],
+                                                      'dateModified':
+                                                          orderTimeStamp,
+                                                      'amount':
+                                                          productDocs['price'],
+                                                      'dateTime':
+                                                          orderTimeStamp,
+                                                      'title':
+                                                          productDocs['title'],
+                                                      'productId': productId,
+                                                      'productOwnerId':
+                                                          productDocs[
+                                                              'creatorId'],
+                                                      'status': 'Pending'
+                                                    },
+                                                  );
+                                                });
+
+                                                Navigator.of(ctx).pop(false);
+
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (ctx) => AlertDialog(
+                                                    title: Text(
+                                                        'Order Instruction'),
+                                                    content: Text(
+                                                      'Please send e-Transfer \$${productDocs['price']} to vdcfund@gmail.com',
+                                                    ),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(ctx)
+                                                              .pop(false);
+                                                          Navigator.of(context)
+                                                              .pushNamed(
+                                                                  OrderScreen
+                                                                      .routeName);
                                                         },
-                                                      );
-                                                    });
-
-                                                    Navigator.of(ctx)
-                                                        .pop(false);
-
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (ctx) =>
-                                                          AlertDialog(
-                                                        title: Text(
-                                                            'Order Instruction'),
-                                                        content: Text(
-                                                          'Please send e-Transfer \$${productDocs['price']} to vdcfund@gmail.com',
-                                                        ),
-                                                        actions: <Widget>[
-                                                          TextButton(
-                                                            onPressed: () {
-                                                              Navigator.of(ctx)
-                                                                  .pop(false);
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pushNamed(
-                                                                      OrderScreen
-                                                                          .routeName);
-                                                            },
-                                                            child: Text(
-                                                              'Okay',
-                                                              style: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                              ),
-                                                            ),
+                                                        child: Text(
+                                                          'Okay',
+                                                          style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight.bold,
                                                           ),
-                                                        ],
+                                                        ),
                                                       ),
-                                                    );
-                                                  },
-                                                ),
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.of(ctx)
-                                                        .pop(false);
-                                                  },
-                                                  child: Text(
-                                                    'No',
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.bold),
+                                                    ],
                                                   ),
-                                                ),
-                                              ],
+                                                );
+                                              },
                                             ),
-                                          );
-                                        }
-                                      },
-                                    );
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(ctx).pop(false);
+                                              },
+                                              child: Text(
+                                                'No',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }
                                   },
                                 )
                               : Padding(
@@ -393,97 +373,88 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   style: TextStyle(color: Colors.white),
                                 ),
                           onPressed: () async {
-                            var versionID = await FirebaseFirestore.instance
-                                .collection('version')
-                                .doc('versionID')
-                                .get()
-                                .then(
-                              (value) async {
-                                var versionNumber = value['versionNumber'];
-                                if (version != versionNumber) {
-                                  update_alert(context);
-                                } else {
-                                  CollectionReference chatRooms =
-                                      FirebaseFirestore.instance
-                                          .collection('chatRooms');
-                                  productDocs['creatorId'] == user.uid
-                                      ? Navigator.of(context).pushNamed(
-                                          EditProductScreen.routeName,
-                                          arguments: [
-                                              productId,
-                                              productDocs['title'],
-                                              productDocs['imageUrl'],
-                                              productDocs['price'],
-                                              productDocs['description'],
-                                              productDocs['category'],
-                                            ])
-                                      : await chatRooms
-                                          .where('roomParticipants',
-                                              arrayContainsAny: [
-                                                '${user.uid}_${productDocs['creatorId']}',
-                                                '${productDocs['creatorId']}_${user.uid}'
-                                              ])
-                                          .get()
-                                          .then(
-                                            (value) {
-                                              showDialog(
-                                                context: context,
-                                                builder: (ctx) => AlertDialog(
-                                                  title: Text(
-                                                    'REMINDER!',
+                            var versionNumber = await versionCheck();
+
+                            if (version != versionNumber) {
+                              update_alert(context);
+                            } else {
+                              CollectionReference chatRooms = FirebaseFirestore
+                                  .instance
+                                  .collection('chatRooms');
+                              productDocs['creatorId'] == user.uid
+                                  ? Navigator.of(context).pushNamed(
+                                      EditProductScreen.routeName,
+                                      arguments: [
+                                          productId,
+                                          productDocs['title'],
+                                          productDocs['imageUrl'],
+                                          productDocs['price'],
+                                          productDocs['description'],
+                                          productDocs['category'],
+                                        ])
+                                  : await chatRooms
+                                      .where('roomParticipants',
+                                          arrayContainsAny: [
+                                            '${user.uid}_${productDocs['creatorId']}',
+                                            '${productDocs['creatorId']}_${user.uid}'
+                                          ])
+                                      .get()
+                                      .then(
+                                        (value) {
+                                          showDialog(
+                                            context: context,
+                                            builder: (ctx) => AlertDialog(
+                                              title: Text(
+                                                'REMINDER!',
+                                              ),
+                                              content: Text(
+                                                'Please note that all chat data are being monitored. Do you want to proceed?',
+                                              ),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () async {
+                                                    Navigator.of(ctx)
+                                                        .pop(false);
+                                                    Navigator.of(context)
+                                                        .pushNamed(
+                                                            ChatScreen
+                                                                .routeName,
+                                                            arguments: [
+                                                          productDocs[
+                                                              'creatorId'],
+                                                          value.docs.isEmpty
+                                                              ? ""
+                                                              : value.docs.first
+                                                                  .id,
+                                                        ]);
+                                                  },
+                                                  child: Text(
+                                                    'Yes',
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold),
                                                   ),
-                                                  content: Text(
-                                                    'Please note that all chat data are being monitored. Do you want to proceed?',
-                                                  ),
-                                                  actions: <Widget>[
-                                                    TextButton(
-                                                      onPressed: () async {
-                                                        Navigator.of(ctx)
-                                                            .pop(false);
-                                                        Navigator.of(context)
-                                                            .pushNamed(
-                                                                ChatScreen
-                                                                    .routeName,
-                                                                arguments: [
-                                                              productDocs[
-                                                                  'creatorId'],
-                                                              value.docs.isEmpty
-                                                                  ? ""
-                                                                  : value.docs
-                                                                      .first.id,
-                                                            ]);
-                                                      },
-                                                      child: Text(
-                                                        'Yes',
-                                                        style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                    ),
-                                                    TextButton(
-                                                      onPressed: () async {
-                                                        Navigator.of(ctx)
-                                                            .pop(false);
-                                                      },
-                                                      child: Text(
-                                                        'No',
-                                                        style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                    ),
-                                                  ],
                                                 ),
-                                              );
-                                            },
+                                                TextButton(
+                                                  onPressed: () async {
+                                                    Navigator.of(ctx)
+                                                        .pop(false);
+                                                  },
+                                                  child: Text(
+                                                    'No',
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           );
-                                }
-                              },
-                            );
+                                        },
+                                      );
+                            }
                           },
                         ),
                       ],
@@ -516,15 +487,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              // Text(
-                              //   'Description: ',
-                              //   textAlign: TextAlign.start,
-                              //   softWrap: true,
-                              // ),
                               SelectableText(
                                 productDocs['description'],
-                                // textAlign: TextAlign.center,
-                                // softWrap: true,
                               ),
                             ],
                           ),

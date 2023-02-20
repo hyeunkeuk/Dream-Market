@@ -6,6 +6,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:audioplayers/audioplayers.dart';
 // import 'package:flutter_audio_manager_plus/flutter_audio_manager_plus.dart';
 
+import 'package:shopping/widgets/update_alert.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+
 class QTScreen extends StatefulWidget {
   // const QTScreen({Key key}) : super(key: key);
   static const routeName = '/qt';
@@ -15,6 +18,8 @@ class QTScreen extends StatefulWidget {
 }
 
 class _QTScreenState extends State<QTScreen> {
+  String version = '1.1.3';
+
   final _controller = new TextEditingController();
 
   bool expend = false;
@@ -66,6 +71,8 @@ class _QTScreenState extends State<QTScreen> {
     Future.delayed(Duration.zero, () async {
       await player.setSource(AssetSource('audio/qt_audio.mp3'));
       isMute ? player.stop() : player.resume();
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      version = packageInfo.version;
     });
     // init();
     // FlutterAudioManagerPlus.changeToSpeaker();
@@ -232,11 +239,17 @@ class _QTScreenState extends State<QTScreen> {
                     ),
                     showAdd == true
                         ? IconButton(
-                            onPressed: () {
-                              setState(() {
-                                expend = true;
-                                showAdd = false;
-                              });
+                            onPressed: () async {
+                              var versionNumber = await versionCheck();
+
+                              if (version != versionNumber) {
+                                update_alert_to_main(context);
+                              } else {
+                                setState(() {
+                                  expend = true;
+                                  showAdd = false;
+                                });
+                              }
                             },
                             icon: Icon(Icons.playlist_add_circle),
                           )

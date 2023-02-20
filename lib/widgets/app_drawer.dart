@@ -43,20 +43,7 @@ class _AppDrawerState extends State<AppDrawer> {
       // TODO: implement didChangeDependencies
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
       version = packageInfo.version;
-      var versionID = await FirebaseFirestore.instance
-          .collection('version')
-          .doc('versionID')
-          .get()
-          .then(
-        (value) {
-          var versionNumber = value['versionNumber'];
-          if (version != versionNumber) {
-            Navigator.of(context).pop();
 
-            update_alert(context);
-          }
-        },
-      );
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -85,38 +72,56 @@ class _AppDrawerState extends State<AppDrawer> {
             ListTile(
               leading: Icon(Icons.menu_book_rounded),
               title: Text('QT'),
-              onTap: () {
+              onTap: () async {
                 Navigator.of(context).pop();
                 Navigator.of(context).pushNamed(QTScreen.routeName);
+
+                var versionNumber = await versionCheck();
+                if (version != versionNumber) {
+                  update_alert(context);
+                }
               },
             ),
             Divider(),
             ListTile(
               leading: Icon(Icons.payment),
               title: Text('Orders'),
-              onTap: () {
+              onTap: () async {
                 Navigator.of(context).pop();
-                Navigator.of(context).pushNamed(OrderScreen.routeName);
+                var versionNumber = await versionCheck();
+                if (version != versionNumber) {
+                  update_alert(context);
+                } else {
+                  Navigator.of(context).pushNamed(OrderScreen.routeName);
+                }
               },
             ),
             Divider(),
             ListTile(
               leading: Icon(Icons.edit),
               title: Text('Manage Product'),
-              onTap: () {
+              onTap: () async {
                 Navigator.of(context).pop();
-
-                Navigator.of(context).pushNamed(UserProductsScreen.routeName);
+                var versionNumber = await versionCheck();
+                if (version != versionNumber) {
+                  update_alert(context);
+                } else {
+                  Navigator.of(context).pushNamed(UserProductsScreen.routeName);
+                }
               },
             ),
             Divider(),
             ListTile(
               leading: Icon(Icons.settings),
               title: Text('Setting'),
-              onTap: () {
+              onTap: () async {
                 Navigator.of(context).pop();
-
                 Navigator.of(context).pushNamed(SettingScreen.routeName);
+
+                var versionNumber = await versionCheck();
+                if (version != versionNumber) {
+                  update_alert(context);
+                }
               },
             ),
             widget.userStatus == 'admin' ? Divider() : SizedBox.shrink(),
@@ -136,17 +141,9 @@ class _AppDrawerState extends State<AppDrawer> {
               leading: Icon(Icons.exit_to_app),
               title: Text('Logout'),
               onTap: () {
-                // Navigator.of(context).pushReplacementNamed('/');
-                // Navigator.of(context).pop();
-                // FirebaseAuth.instance.signOut();
                 FirebaseAuth.instance.signOut().then(
                       (_) => Navigator.of(context).pushReplacementNamed('/'),
                     );
-                // Navigator.of(context)
-                //     .pushReplacementNamed('/')
-                //     .then((value) => FirebaseAuth.instance.signOut());
-
-                // Provider.of<Auth>(context, listen: false).logout();
               },
             ),
             Text(
